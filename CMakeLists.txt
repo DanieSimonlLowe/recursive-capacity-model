@@ -12,5 +12,7 @@ include_directories(/usr/include/eigen3)
 add_subdirectory(src)
 add_subdirectory(tests)
 
+add_executable(EVLifeCycle_main src/main.cpp)
+target_link_libraries(EVLifeCycle_main EVLifeCycle_lib)
 
-target_link_libraries(EVLifeCycle_test EVLifeCycle_lib gtest gmock gtest_main gmock_main) # Or   for modern CMake
+target_link_libraries(EVLifeCycle_test EVLifeCycle_lib gtest gmock gtest_main gmock_main)
