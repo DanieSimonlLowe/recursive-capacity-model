@@ -30,8 +30,11 @@ void InterpolatorEvaluator::stepThroughEvaluation(const Eigen::VectorXd &voltage
             voltageInterpolator->update(v,ts);
             currentInterpolator->update(c,ts);
             temperatureInterpolator->update(t,ts);
-
-            makePrediction(oldTs,oldV,oldC,oldT);
+            // Modify this to count total that are skiped 
+            if (hasOld) {
+                hasOld = false;
+                makePrediction(oldTs,oldV,oldC,oldT);
+            }
         } else {
             hasOld = true;
             oldV = v;
