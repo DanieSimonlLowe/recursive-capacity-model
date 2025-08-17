@@ -1,3 +1,6 @@
+
+
+Setup instructions:
 cd /mnt/c/Users/Danie/Desktop/project/build
 
 cmake .. -DCMAKE_BUILD_TYPE=Debug -G "Unix Makefiles"
@@ -10,6 +13,13 @@ make all
 TODO Try:
 Before that use EKF with
 f(x) = a + bx + csin(wx) + dcos(wx)
+
+Notes:
+
+do cubic spline, (both types)
+https://math.libretexts.org/Bookshelves/Applied_Mathematics/Numerical_Methods_(Chasnov)/05%3A_Interpolation/5.03%3A_Cubic_Spline_Interpolation
+
+do RSL
 
 https://www.sciencedirect.com/science/article/abs/pii/S0167865514000786
 Recursive GP regression 

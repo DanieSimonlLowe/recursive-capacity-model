@@ -14,6 +14,8 @@ class PolySineEKFInterpolator : public InterpolatorBase {
         void update(double measurement, double time) override;
         bool canPredict() override;
         void reset() override;
+        void setParams(Eigen::VectorXd& params) override;
+        size_t getParamsCount() override;
 
 
     private:
@@ -26,6 +28,7 @@ class PolySineEKFInterpolator : public InterpolatorBase {
                 Eigen::VectorXd measurementFunction(const Eigen::VectorXd &state) override;
                 Eigen::MatrixXd measurementJacobian(const Eigen::VectorXd &state) override;
                 void predict() override;
+                
 
                 double time;
                 double lastPredictTime;

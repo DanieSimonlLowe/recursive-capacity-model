@@ -33,6 +33,33 @@ void PolySineEKFInterpolator::reset() {
     ekf->hasPredicted = false;
 }
 
+void PolySineEKFInterpolator::setParams(Eigen::VectorXd& params) {
+    unsigned int polyDegree = (unsigned int)params(0);
+    double updateNoise = params(1);
+    double measurementNoise = params(2);
+    double initialError = params(3);
+    double resetSeccoundsEquivalent = params(4);
+
+    this->polyDegree = polyDegree;
+    this->resetSeccoundsEquivalent = resetSeccoundsEquivalent;
+
+    Eigen::MatrixXd processNoise = Eigen::MatrixXd::Identity(polyDegree + 3, polyDegree + 3) * updateNoise;
+    Eigen::MatrixXd measurementNoiseMatrix = Eigen::MatrixXd::Identity(1, 1) * measurementNoise;
+    
+    // state a,b,w, n1,...nn
+    Eigen::VectorXd initialState = Eigen::VectorXd::Zero(polyDegree + 3);
+    initialState(2) = 3;
+
+    Eigen::MatrixXd initialCovariance = Eigen::MatrixXd::Identity(polyDegree + 3, polyDegree + 3) * initialError;
+
+    ekf = new HelperEKF(processNoise, measurementNoiseMatrix, initialState, initialCovariance);
+    ekf->polyDegree = polyDegree;
+}
+
+size_t PolySineEKFInterpolator::getParamsCount() {
+    return 5;
+}
+
 Eigen::MatrixXd measurementJacobianHelper(const Eigen::VectorXd &state, unsigned int polyDegree, double time) {
     Eigen::MatrixXd out(1, polyDegree + 3);
 

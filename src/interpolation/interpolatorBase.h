@@ -1,6 +1,7 @@
 #pragma once
 #include <vector>
 #include <stdexcept>
+#include <Eigen/Dense>
 
 class InterpolatorBase {
     
@@ -14,6 +15,8 @@ class InterpolatorBase {
         virtual void update(double measurement, double time) = 0;
         virtual bool canPredict() = 0;
         virtual void reset() = 0;
+        virtual void setParams(Eigen::VectorXd& params); 
+        virtual size_t getParamsCount();
     
     protected:
         double timeStepSize;

@@ -29,3 +29,10 @@ std::vector<double> InterpolatorBase::GetTimeSteps(double measurement, double ti
     return predictions;
 };
 
+void InterpolatorBase::setParams(Eigen::VectorXd& params) {
+    throw std::logic_error("SetParams function not yet implemented");
+}
+
+size_t InterpolatorBase::getParamsCount() {
+    return 0;
+}
