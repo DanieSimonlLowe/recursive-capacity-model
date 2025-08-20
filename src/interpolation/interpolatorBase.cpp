@@ -30,9 +30,21 @@ std::vector<double> InterpolatorBase::GetTimeSteps(double measurement, double ti
 };
 
 void InterpolatorBase::setParams(Eigen::VectorXd& params) {
-    throw std::logic_error("SetParams function not yet implemented");
-}
+    throw std::logic_error("setParams function not yet implemented");
+};
+
+Eigen::VectorXd InterpolatorBase::getLowerBounds() {
+    throw std::logic_error("getLowerBounds function not yet implemented");
+    Eigen::VectorXd out(0);
+    return out;
+};
+
+Eigen::VectorXd InterpolatorBase::getUpperBounds() {
+    throw std::logic_error("getUpperBounds function not yet implemented");
+    Eigen::VectorXd out(0);
+    return out; 
+};
 
 size_t InterpolatorBase::getParamsCount() {
     return 0;
-}
+};

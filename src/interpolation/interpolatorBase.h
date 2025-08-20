@@ -17,6 +17,8 @@ class InterpolatorBase {
         virtual void reset() = 0;
         virtual void setParams(Eigen::VectorXd& params); 
         virtual size_t getParamsCount();
+        virtual Eigen::VectorXd getLowerBounds();
+        virtual Eigen::VectorXd getUpperBounds();
     
     protected:
         double timeStepSize;

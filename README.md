@@ -9,6 +9,7 @@ make all
 
 ./EVLifeCycle_main
 
+0.269693,1,9.65345e-05,0.999982
 
 TODO Try:
 Before that use EKF with

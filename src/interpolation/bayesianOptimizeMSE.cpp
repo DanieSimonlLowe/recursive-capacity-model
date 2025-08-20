@@ -4,11 +4,8 @@ class MSEOptimizer : public bayesopt::ContinuousModel {
 private:
     InterpolatorBase* baseInterpolator;
     MSEType type;
-    mutable vectord bestParams;
-    mutable double bestValue;
-    mutable bool hasBest;
-    Eigen::VectorXd lowerBounds;
-    Eigen::VectorXd upperBounds;
+    Eigen::VectorXd lower;
+    Eigen::VectorXd upper;
 
 public:
     MSEOptimizer(InterpolatorBase* interpolator, MSEType mseType, 
@@ -16,10 +13,8 @@ public:
         : ContinuousModel(lower.size(), bayesopt::Parameters()), 
           baseInterpolator(interpolator), 
           type(mseType),
-          bestValue(std::numeric_limits<double>::max()),
-          hasBest(false),
-          lowerBounds(lower),
-          upperBounds(upper)
+          lower(lower),
+          upper(upper)
     {
         if (lower.size() != upper.size()) {
             throw std::invalid_argument("Lower and upper bounds must have the same size");
@@ -31,34 +26,45 @@ public:
                 throw std::invalid_argument("Lower bound must be less than upper bound for all dimensions");
             }
         }
+
+        // vectord lowerBound(lower.size());
+        // vectord upperBound(lower.size());
+        // for (int i = 0; i<lower.size(); i++) {
+        //     lowerBound[i] = lower[i];
+        //     upperBound[i] = upper[i];
+        // }
+        //setBoundingBox(lowerBound,upperBound);
+                
         
-        bestParams.resize(lower.size());
+        // // Configure BayesOpt parameters
+        // mParameters.n_init_samples = 10;        // Increased for better initial coverage
+        // mParameters.n_iterations = 100;         // Increased iterations
+        // mParameters.noise = 1e-1;               // Reduced noise (was too high)
+        mParameters.alpha = 5e-3;               // Reduced alpha for better exploration
+        // mParameters.epsilon = 1e-8;             // Reduced epsilon for convergence
         
-        // Configure BayesOpt parameters
-        mParameters.n_init_samples = 10;
-        mParameters.n_iterations = 50;
-        mParameters.noise = 0.001;
-        mParameters.alpha = 0.5;
-        mParameters.kernel.name = "kMaternISO5";
-        mParameters.verbose_level = 1;
+        // // FIXED: Use a more robust kernel
+        // mParameters.kernel.name = "kMaternARD5"; // Changed from ARD to ISO for stability
+        // mParameters.kernel.hp_mean[0] = 0.5 * (upperBounds - lowerBounds).norm();
+        // mParameters.kernel.hp_std[0]  = mParameters.kernel.hp_mean[0];
         
-        // Convert Eigen bounds to BayesOpt vectord format
-        vectord bayesLower(lower.size());
-        vectord bayesUpper(upper.size());
+        // mParameters.verbose_level = 3;          // Increased verbosity for debugging
+        // mParameters.crit_name = "cLCB";          // Expected Improvement
+        mParameters.force_jump = 3;
         
-        for (int i = 0; i < lower.size(); ++i) {
-            bayesLower[i] = lower[i];
-            bayesUpper[i] = upper[i];
-        }
+        // // FIXED: Add learning parameters
+        // mParameters.l_type = L_EMPIRICAL;            // Use MCMC for learning
+        // mParameters.sc_type = SC_ML;           // Use MAP for surrogate
         
-        setBoundingBox(bayesLower, bayesUpper);
+        
+        
     }
     
     double evaluateSample(const vectord& params) override {
         // Convert vectord to Eigen::VectorXd
         Eigen::VectorXd eigenParams(params.size());
         for (size_t i = 0; i < params.size(); ++i) {
-            eigenParams[i] = params[i];
+            eigenParams[i] = lower[i] + params[i] * (upper[i] - lower[i]);
         }
         std::cout << "Params v:\n" << eigenParams << std::endl;
         
@@ -81,47 +87,37 @@ public:
                 mse = evaluator.getTemperatureMSE(); 
                 break;
         }
-        std::cout << "MSE:" << mse << std::endl;
-        if (mse > 1e25) {
-            mse = 1e25;
+        // double mse = 0.0;
+        // for (size_t i = 0; i < params.size(); ++i) {
+        //     mse += params[i] + 5;
+        // }
+
+        std::cout << "raw MSE:" << mse << std::endl;
+        bool isCaped = false;
+        if(mse > 1e100 || std::isnan(mse)) {
+            mse = 1e100;
+            isCaped = true;
         }
+        if (mse < 1e-12) {
+            mse = 1e-12;
+            isCaped = true;
+        }
+        double tran_mse = std::sqrt(mse);
+
+        if (isCaped) {
+            tran_mse += (((double)rand() / RAND_MAX) - 0.5) * 1e-6;
+        }
+
+        std::cout << "capped log MSE:" << tran_mse << std::endl;
         
-        delete interp;
+        //delete interp;
         
-        // Track the best result
-        if (mse < bestValue) {
-            bestValue = mse;
-            bestParams = params;
-            hasBest = true;
-        }
-        
-        return mse;
+        return tran_mse;
     }
-    
-    vectord getBestParams() const { return bestParams; }
-    double getBestValue() const { return bestValue; }
-    bool hasValidResult() const { return hasBest; }
-    
-    bool checkReachability(const vectord& query) override {
-        // Check if query is within bounds
-        for (size_t i = 0; i < query.size(); ++i) {
-            if (query[i] < lowerBounds[i] || query[i] > upperBounds[i]) {
-                return false;
-            }
-        }
-        return true;
-    }
-    
-    // Helper to get initial point within bounds
-    vectord getInitialPoint() const {
-        vectord initial(lowerBounds.size());
-        for (int i = 0; i < lowerBounds.size(); ++i) {
-            // Start at the center of each dimension's bounds
-            initial[i] = (lowerBounds[i] + upperBounds[i]) / 2.0;
-        }
-        return initial;
-    }
+
 };
+
+
 
 // Main function with configurable bounds
 Eigen::VectorXd bayesianOptimizeMSE(
@@ -139,37 +135,33 @@ Eigen::VectorXd bayesianOptimizeMSE(
     
     MSEOptimizer optimizer(&interpolator, mseType, lowerBounds, upperBounds);
     
-    // Initial point (center of search space)
-    vectord initialPoint = optimizer.getInitialPoint();
-    
+    //gridTest(optimizer,lowerBounds, upperBounds);
+        
     // Run optimization
-    optimizer.optimize(initialPoint);
+    vectord bestParams(dim);
+    optimizer.optimize(bestParams);
     
     // Get results from our internal tracking
-    vectord bestParams;
-    double bestMSE;
     
-    if (optimizer.hasValidResult()) {
-        bestParams = optimizer.getBestParams();
-        bestMSE = optimizer.getBestValue();
-    } else {
-        // Fallback: use the initial point
-        bestParams = initialPoint;
-        bestMSE = optimizer.evaluateSample(initialPoint);
-    }
     
     std::cout << "Best params: ";
     for (size_t i = 0; i < bestParams.size(); ++i) {
+        bestParams[i] = lowerBounds[i] + bestParams[i] * (upperBounds[i] - lowerBounds[i]);
         std::cout << bestParams[i] << " ";
     }
-    std::cout << "\n";
-    std::cout << "Best MSE: " << bestMSE << "\n";
+
+    
+
     
     // Convert back to Eigen::VectorXd
     Eigen::VectorXd result(bestParams.size());
     for (size_t i = 0; i < bestParams.size(); ++i) {
         result[i] = bestParams[i];
     }
+
+    interpolator.setParams(result);
+    InterpolatorEvaluator evaluator(&interpolator);
+    evaluator.printResults();
     
     return result;
 }

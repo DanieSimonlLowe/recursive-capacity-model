@@ -1,3 +1,4 @@
+#pragma once
 #include <Eigen/Dense>
 
 // https://www.mathworks.com/help/driving/ug/extended-kalman-filters.html

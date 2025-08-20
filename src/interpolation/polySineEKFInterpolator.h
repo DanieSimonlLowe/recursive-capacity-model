@@ -16,6 +16,8 @@ class PolySineEKFInterpolator : public InterpolatorBase {
         void reset() override;
         void setParams(Eigen::VectorXd& params) override;
         size_t getParamsCount() override;
+        Eigen::VectorXd getLowerBounds() override;
+        Eigen::VectorXd getUpperBounds() override;
 
 
     private:

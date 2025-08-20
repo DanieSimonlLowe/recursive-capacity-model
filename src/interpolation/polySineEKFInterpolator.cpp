@@ -146,3 +146,24 @@ Eigen::MatrixXd PolySineEKFInterpolator::HelperEKF::measurementJacobian(const Ei
     return measurementJacobianHelper(state,polyDegree,time);
 }
 
+Eigen::VectorXd PolySineEKFInterpolator::getLowerBounds() {
+    Eigen::VectorXd lower(5);
+    lower[0] = 1.0;
+    lower[1] = 1e-8;
+    lower[2] = 1e-6;
+    lower[3] = 1e-6;
+    lower[4] = 0.001;  // 1ms minimum
+    
+    return lower;
+}
+
+Eigen::VectorXd PolySineEKFInterpolator::getUpperBounds() {
+    Eigen::VectorXd upper(5);
+    upper[0] = 6.0;  // Will be cast to int, so this means 0-8
+    upper[1] = 1.0;
+    upper[2] = 0.1;
+    upper[3] = 15.0;
+    upper[4] = 600.0;  //  hour maximum
+    
+    return upper;
+}
