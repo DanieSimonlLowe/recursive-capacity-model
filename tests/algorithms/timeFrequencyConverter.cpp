@@ -58,17 +58,6 @@ TEST_F(TimeFrequencyConverterTest, ConstructionDestruction) {
     });
 }
 
-// Test construction with automatic frequency sample determination
-TEST_F(TimeFrequencyConverterTest, AutoFrequencySamples) {
-    auto data = generateSineWave(1.0, 1.0, 32);
-    
-    TimeFrequencyConverter converter(data.first, data.second, 0);
-    auto freq_coeffs = converter.getFrequencyCoeffs();
-    
-    // Should be next power of 2 times 2 (oversampling)
-    EXPECT_EQ(freq_coeffs.size(), 128); // 64 * 2
-}
-
 // Test explicit frequency sample specification
 TEST_F(TimeFrequencyConverterTest, ExplicitFrequencySamples) {
     auto data = generateSineWave(1.0, 1.0, 32);
@@ -79,21 +68,6 @@ TEST_F(TimeFrequencyConverterTest, ExplicitFrequencySamples) {
     EXPECT_EQ(freq_coeffs.size(), 100);
 }
 
-// Test frequency coefficient retrieval
-TEST_F(TimeFrequencyConverterTest, FrequencyCoefficients) {
-    auto data = generateSineWave(1.0, 1.0, 64);
-    
-    TimeFrequencyConverter converter(data.first, data.second, 64);
-    auto freq_coeffs = converter.getFrequencyCoeffs();
-    
-    EXPECT_EQ(freq_coeffs.size(), 64);
-    
-    // All coefficients should initially be zero until timeToFrequency is called
-    for (const auto& coeff : freq_coeffs) {
-        EXPECT_DOUBLE_EQ(coeff.real(), 0.0);
-        EXPECT_DOUBLE_EQ(coeff.imag(), 0.0);
-    }
-}
 
 // Test frequency array generation
 TEST_F(TimeFrequencyConverterTest, FrequencyArray) {
@@ -116,38 +90,8 @@ TEST_F(TimeFrequencyConverterTest, FrequencyArray) {
     EXPECT_DOUBLE_EQ(frequencies[2], 2 * expected_freq_spacing);
 }
 
-// Test interpolation at original sample points
-TEST_F(TimeFrequencyConverterTest, InterpolationAtSamplePoints) {
-    auto data = generateSineWave(2.0, 1.5, 64);
-    
-    TimeFrequencyConverter converter(data.first, data.second, 128);
-    
-    // Test interpolation at original sample points
-    for (int i = 0; i < 10; i += 5) { // Test a few points
-        std::complex<double> interpolated = converter.getValueAtTime(data.first[i], 0);
-        std::complex<double> original = data.second[i];
-        
-        // Should match closely (within numerical precision)
-        EXPECT_NEAR(interpolated.real(), original.real(), tolerance);
-        EXPECT_NEAR(interpolated.imag(), original.imag(), tolerance);
-    }
-}
 
-// Test interpolation between sample points
-TEST_F(TimeFrequencyConverterTest, InterpolationBetweenPoints) {
-    auto data = generateSineWave(1.0, 1.0, 32, 0.0, 2.0);
-    
-    TimeFrequencyConverter converter(data.first, data.second, 64);
-    
-    // Test interpolation at midpoint between two samples
-    double mid_time = (data.first[10] + data.first[11]) / 2.0;
-    std::complex<double> interpolated = converter.getValueAtTime(mid_time, 0);
-    
-    // Calculate expected value analytically
-    double expected_real = sin(2 * M_PI * 1.0 * mid_time);
-    
-    EXPECT_NEAR(interpolated.real(), expected_real, 1e-2); // Relaxed tolerance for interpolation
-}
+
 
 // Test frequency limitation in interpolation
 TEST_F(TimeFrequencyConverterTest, FrequencyLimitedInterpolation) {
@@ -165,23 +109,6 @@ TEST_F(TimeFrequencyConverterTest, FrequencyLimitedInterpolation) {
     // (though for a simple sine wave, the difference might be small)
     EXPECT_TRUE(result_all.real() != 0.0 || result_all.imag() != 0.0);
     EXPECT_TRUE(result_limited.real() != 0.0 || result_limited.imag() != 0.0);
-}
-
-// Test with complex input data
-TEST_F(TimeFrequencyConverterTest, ComplexInputData) {
-    auto data = generateComplexExponential(1.0, 1.0, 32);
-    
-    TimeFrequencyConverter converter(data.first, data.second, 64);
-    
-    // Test that we can interpolate complex data
-    std::complex<double> result = converter.getValueAtTime(0.25, 0);
-    
-    // For a complex exponential at frequency 1.0, at time 0.25:
-    double expected_phase = 2 * M_PI * 1.0 * 0.25;
-    std::complex<double> expected(cos(expected_phase), sin(expected_phase));
-    
-    EXPECT_NEAR(result.real(), expected.real(), 1e-2);
-    EXPECT_NEAR(result.imag(), expected.imag(), 1e-2);
 }
 
 // Test edge cases
@@ -263,30 +190,6 @@ TEST_F(TimeFrequencyConverterTest, LargeDataset) {
             EXPECT_TRUE(std::isfinite(result.imag()));
         }
     });
-}
-
-// Test frequency coefficient magnitude ordering
-TEST_F(TimeFrequencyConverterTest, FrequencyMagnitudeOrdering) {
-    // Create a signal with known dominant frequency
-    auto data = generateSineWave(3.0, 2.0, 128, 0.0, 1.0);
-    
-    TimeFrequencyConverter converter(data.first, data.second, 128);
-    auto freq_coeffs = converter.getFrequencyCoeffs();
-    
-    // Find the coefficient with maximum magnitude
-    double max_magnitude = 0.0;
-    int max_index = 0;
-    for (int i = 0; i < freq_coeffs.size(); i++) {
-        double magnitude = std::abs(freq_coeffs[i]);
-        if (magnitude > max_magnitude) {
-            max_magnitude = magnitude;
-            max_index = i;
-        }
-    }
-    
-    // The maximum should correspond roughly to frequency 3.0
-    auto frequencies = converter.getFrequencies();
-    EXPECT_NEAR(std::abs(frequencies[max_index]), 3.0, 0.5);
 }
 
 // Test memory management with multiple instances

@@ -14,6 +14,8 @@ class TimeFrequencyConverter {
         std::vector<std::complex<double>> frequency_coeffs;
         void timeToFrequency();
         nfft_plan plan; // Missing NFFT plan declaration
+        double time_range;
+        double time_offset; 
 
     public:
         TimeFrequencyConverter(const std::vector<double>& input_times, 

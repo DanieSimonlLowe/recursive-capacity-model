@@ -20,6 +20,8 @@ target_link_libraries(EVLifeCycle_main EVLifeCycle_lib)
 target_link_libraries(EVLifeCycle_main pthread)
 target_link_libraries(EVLifeCycle_main bayesopt nlopt nfft3)  
 
+target_link_libraries(EVLifeCycle_test nfft3)  
+
 target_link_libraries(EVLifeCycle_test EVLifeCycle_lib gtest gmock gtest_main gmock_main)
 
 
