@@ -2,7 +2,8 @@
 #include "interpolation/interpolatorBase.h"
 #include <Eigen/Dense>
 #include "algorithms/notKnotSpline.h"
-#include <vector>        
+#include <vector>       
+#include <memory> 
 
 class NotKnotSplineInterpolator : public InterpolatorBase {
     public:
@@ -20,5 +21,6 @@ class NotKnotSplineInterpolator : public InterpolatorBase {
 
         std::vector<double> times;
         std::vector<double> measurements;
+        std::unique_ptr<NotKnotSpline> spline;
 };
 

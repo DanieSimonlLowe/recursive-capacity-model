@@ -1,17 +1,28 @@
 #include "interpolation/interpolatorEvaluator.h"
-#include "interpolation/notKnotSplineInterpolator.h"
+#include "interpolation/cubicSplineInterpolator.h"
+#include "interpolation/fastCubicSplineInterpolator.h"
 #include "interpolation/bayesianOptimizeMSE.h"
 
 #include <chrono>
 int main(int argc, char **argv) { 
 
     auto start = std::chrono::high_resolution_clock::now();
-    std::cout << 10 << " \n";
-    (new InterpolatorEvaluator(new NotKnotSplineInterpolator(0.1,10)))->printResults();
+    //std::cout << "start \n";
+    (new InterpolatorEvaluator(new FastCubicSplineInterpolator(0.1)))->printResults();
 
     auto end = std::chrono::high_resolution_clock::now();
 
     std::chrono::duration<double, std::milli> duration = end - start;
+    std::cout << "Time taken: " << duration.count() << " ms" << std::endl;
+
+    // Secound
+    start = std::chrono::high_resolution_clock::now();
+    //std::cout << "start \n";
+    (new InterpolatorEvaluator(new CubicSplineInterpolator(0.1,50)))->printResults();
+
+    end = std::chrono::high_resolution_clock::now();
+
+    duration = end - start;
     std::cout << "Time taken: " << duration.count() << " ms" << std::endl;
 
 

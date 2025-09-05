@@ -14,12 +14,16 @@ void InterpolatorEvaluator::stepThroughEvaluation(const Eigen::VectorXd &voltage
                           const Eigen::VectorXd &current,
                           const Eigen::VectorXd &temperature,
                           const Eigen::VectorXd &time) {
+
+    struct Sample { double v; double c; double t; double ts; };
+
     const Eigen::Index n = voltage.size(); 
     voltageInterpolator->reset();
     currentInterpolator->reset();
     temperatureInterpolator->reset();
-    bool hasOld = false;
-    double oldV, oldC, oldT, oldTs;
+
+    std::vector<Sample> skipped;
+    skipped.reserve(64); 
     for (Eigen::Index i = 0; i < n; ++i) {
         double v = voltage[i];
         double c = current[i];
@@ -31,16 +35,14 @@ void InterpolatorEvaluator::stepThroughEvaluation(const Eigen::VectorXd &voltage
             currentInterpolator->update(c,ts);
             temperatureInterpolator->update(t,ts);
             // Modify this to count total that are skiped 
-            if (hasOld) {
-                hasOld = false;
-                makePrediction(oldTs,oldV,oldC,oldT);
+            if (!skipped.empty()) {
+                for (const auto &s : skipped) {
+                    makePrediction(s.ts, s.v, s.c, s.t);
+                }
+                skipped.clear();
             }
         } else {
-            hasOld = true;
-            oldV = v;
-            oldT = t;
-            oldTs = ts;
-            oldC = c;
+            skipped.push_back({ v, c, t, ts });
         }
     }
 }

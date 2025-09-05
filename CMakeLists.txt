@@ -3,7 +3,9 @@ project(EVLifeCycle)
 
 cmake_policy(SET CMP0079 NEW)
 
+
 set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_FLAGS_RELEASE "-O3 -march=native")
 
 include_directories(src)
 include_directories(/usr/include/eigen3)

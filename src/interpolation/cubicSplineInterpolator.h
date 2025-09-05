@@ -2,7 +2,8 @@
 #include "interpolation/interpolatorBase.h"
 #include <Eigen/Dense>
 #include "algorithms/cubicSpline.h"
-#include <vector>        
+#include <vector>
+#include <memory>
 
 class CubicSplineInterpolator : public InterpolatorBase {
     public:
@@ -20,5 +21,6 @@ class CubicSplineInterpolator : public InterpolatorBase {
 
         std::vector<double> times;
         std::vector<double> measurements;
+        std::unique_ptr<CubicSpline> spline;
 };
 
