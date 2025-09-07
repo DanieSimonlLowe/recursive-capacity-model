@@ -14,7 +14,10 @@ Voltage         MSE 76.4179      1-R^2 1595.27    Var: 0.0479027
 Temperature     MSE 296.321      1-R^2 40.1822    Var: 7.37444
 
 Poly Sin EFK
-
+Best params: 1.23695 0.000138322 0.0225726 14.9957 76.2866 evaluate P16InterpolatorBase
+Current         MSE 127.846      R^2 152.351    Var: 0.839154
+Voltage         MSE 220.378      R^2 4635.26    Var: 0.047544
+Temperature     MSE 142.03       R^2 19.3138    Var: 7.35381
 
 
 evaluate HermiteSplineInterpolator
