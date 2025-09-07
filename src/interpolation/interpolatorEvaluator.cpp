@@ -103,12 +103,12 @@ void InterpolatorEvaluator::printResults() {
     processNasaCycles("/mnt/c/Users/Danie/Desktop/project/data/B0007.mat","B0007",*this);
 
     std::cout << "Current \tMSE " << getCurrentMSE() 
-            << "\t R^2 " << (getCurrentMSE() / (totalCurrentVariance / (predictionCount-1))) 
+            << "\t 1-R^2 " << (getCurrentMSE() / (totalCurrentVariance / (predictionCount-1))) 
             << " \tVar: " << (totalCurrentVariance / (predictionCount-1)) << " \n";
     std::cout << "Voltage \tMSE " << getVoltageMSE() 
-            << "\t R^2 " << (getVoltageMSE() / (totalVoltageVariance / (predictionCount-1))) 
+            << "\t 1-R^2 " << (getVoltageMSE() / (totalVoltageVariance / (predictionCount-1))) 
             << " \tVar: " << (totalVoltageVariance / (predictionCount-1)) << " \n";
     std::cout << "Temperature \tMSE " << getTemperatureMSE() 
-            << "\t R^2 " << (getTemperatureMSE() / (totalTempratureVariance / (predictionCount-1)))
+            << "\t 1-R^2 " << (getTemperatureMSE() / (totalTempratureVariance / (predictionCount-1)))
             << " \tVar: " << (totalTempratureVariance / (predictionCount-1)) << " \n";
 }

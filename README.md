@@ -29,7 +29,7 @@ This project is written in C++17. You can build it with CMake:
 `
 mkdir build && cd build
 cmake ..
-make
+make all
 `
 
 ## Learning Goals
