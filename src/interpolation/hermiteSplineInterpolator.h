@@ -1,3 +1,4 @@
+#pragma once
 #include "interpolation/interpolatorBase.h"
 
 

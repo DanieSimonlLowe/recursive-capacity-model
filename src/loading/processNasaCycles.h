@@ -22,6 +22,8 @@ class CycleHandler {
                                 const Eigen::VectorXd &time,
                                 const double &capacity) = 0;
 
+        // Rct (Charge transfer resistance):
+        // Re (Electrolyte resistance / ohmic resistance)
         virtual void onImpedance(double Rct, double Re) = 0;
 
 };

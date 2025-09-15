@@ -15,6 +15,8 @@ RecursiveLeastSquares::RecursiveLeastSquares(size_t dimension, double forgetting
         throw std::invalid_argument("forgettingFactor value can't out of the range 0 to 1");
     }
     this->forgettingFactor = forgettingFactor;
+    this->initialCovariance = initialCovariance;
+    this->dimension = dimension;
 }
 
 void RecursiveLeastSquares::update(Eigen::VectorXd x, double y) {
@@ -46,3 +48,32 @@ const Eigen::MatrixXd RecursiveLeastSquares::getCovariance() {
 void RecursiveLeastSquares::multCovariance(double mult) {
     covariance = mult * covariance;
 }
+
+void RecursiveLeastSquares::setParams(Eigen::VectorXd& params) {
+    forgettingFactor = 1 - 1/params[0];
+    initialCovariance = pow(10,params(1));
+}
+
+size_t RecursiveLeastSquares::getParamsCount() {
+    return 2;
+}
+
+Eigen::VectorXd RecursiveLeastSquares::getLowerBounds() {
+    Eigen::VectorXd lower(2);
+    lower[1] = 2;
+    lower[2] = 1;
+    
+    return lower;
+}
+
+Eigen::VectorXd RecursiveLeastSquares::getUpperBounds() {
+    Eigen::VectorXd lower(2);
+    lower[1] = 1000;
+    lower[2] = 15;
+    
+    return lower;
+}
+
+RecursiveLeastSquares* RecursiveLeastSquares::clone() {
+    return new RecursiveLeastSquares(dimension,forgettingFactor, initialCovariance);
+} 

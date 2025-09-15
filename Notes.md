@@ -21,6 +21,7 @@ TODO do this later cause I want to try it. (Is a 2ECM model.)
 https://www.mdpi.com/1996-1073/14/4/1054
 
 
-https://www.sciencedirect.com/science/article/abs/pii/S0167865514000786
-Recursive GP regression 
 
+// TODO OCVEKFEstimator that uses EKF with other stuff
+// This reqires a good soc ocv model.
+// So do the soc ocv model evaluation first. 

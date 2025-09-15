@@ -5,6 +5,8 @@ class ECMStateEstimator {
     public:
         virtual ~ECMStateEstimator() = default;
 
+        virtual ~ECMStateEstimator(RecursiveLeastSquares* rls, double deltaTime) = default;
+
         virtual double getOhmicResistance() = 0;
         
         virtual const std::vector<double> getBranchResistances() = 0;
@@ -13,4 +15,6 @@ class ECMStateEstimator {
 
         virtual bool canCalculateState() const = 0;
     
+        virtual void update(const std::vector<double> current, 
+                    const std::vector<double> voltage);
 };

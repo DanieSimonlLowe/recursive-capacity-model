@@ -16,6 +16,7 @@ src/
  ├─ algorithms/          # Core estimation and filtering algorithms
  ├─ interpolation/       # Interpolators and evaluation tools
  ├─ loading/             # Data loading & NASA dataset processing
+ ├─ optimization/        # Hyperparameters Optimization
  └─ stateEstimation/     # Circuit model based state estimators
 
 ## Dependencies

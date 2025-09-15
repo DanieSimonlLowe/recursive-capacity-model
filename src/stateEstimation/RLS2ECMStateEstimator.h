@@ -9,10 +9,10 @@
 // https://www.mdpi.com/1996-1073/12/12/2242
 class RLS2ECMStateEstimator : public  ECMStateEstimator {
     public:
-        RLS2ECMStateEstimator(RecursiveLeastSquares* rls, double deltaTime);
+        RLS2ECMStateEstimator(RecursiveLeastSquares* rls, double deltaTime) override;
 
         void update(const std::vector<double> current, 
-                    const std::vector<double> voltage);
+                    const std::vector<double> voltage) override;
 
         double getOhmicResistance() override;
         

@@ -9,8 +9,16 @@ class RecursiveLeastSquares {
         const Eigen::MatrixXd getCovariance();
         void multCovariance(double mult);
 
+        virtual void setParams(Eigen::VectorXd& params); 
+        virtual size_t getParamsCount();
+        virtual Eigen::VectorXd getLowerBounds();
+        virtual Eigen::VectorXd getUpperBounds();
+        virtual RecursiveLeastSquares* clone();
+
     protected:
         Eigen::MatrixXd covariance;
         Eigen::VectorXd state;
         double forgettingFactor;
+        double initialCovariance;
+        size_t dimension;
 };
