@@ -1,11 +1,10 @@
 #pragma once
 #include <vector>
 
+
 class ECMStateEstimator {
     public:
-        virtual ~ECMStateEstimator() = default;
-
-        virtual ~ECMStateEstimator(RecursiveLeastSquares* rls, double deltaTime) = default;
+        ~ECMStateEstimator() = default;
 
         virtual double getOhmicResistance() = 0;
         

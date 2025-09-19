@@ -7,6 +7,8 @@ class CubicSpline {
 
         double predict(double time);
 
+        double derivative(double time);
+
         
     private:
         Eigen::VectorXd M;

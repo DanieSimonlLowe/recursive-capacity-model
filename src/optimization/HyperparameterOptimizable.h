@@ -13,4 +13,4 @@ class HyperparameterOptimizable: public CycleHandler {
         virtual std::vector<double> getUpperBounds() = 0;
         virtual void display() = 0;
         virtual double getObjectiveValue() = 0;
-}
+};

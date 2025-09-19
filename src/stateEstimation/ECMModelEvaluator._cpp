@@ -1,3 +1,4 @@
+
 #include "stateEstimation/ECMModelEvaluator.h"
 #define ECM_BATCH_SIZE 50
 
@@ -87,7 +88,7 @@ void ECMModelEvaluator::processData(const Eigen::VectorXd &voltages,
             for (int i = 0; i <= steps; ++i) {
                 double t = startTime + i * deltaTime;
                 // work with t
-                voltageSamples[i] = voltageInterpolator->predict(t);
+                voltageSamples[i] = voltageInerpolator->predict(t);
                 currentSamples[i] = currentInterpolator->predict(t);
             }
 
