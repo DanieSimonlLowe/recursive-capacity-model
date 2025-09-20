@@ -1,7 +1,7 @@
 #define DATA_SPLIT 6
 
 template<typename T>
-SocOcvCurveOptimizable<T>::SocOcvCurveOptimizable() {
+SocOcvCurveOptimizer<T>::SocOcvCurveOptimizer() {
     OcvSocData data = readOcvSocCSV("/mnt/c/Users/Danie/Desktop/project/data/soc_volt_nasa.csv");
     
     int n = data.soc.size();
@@ -52,12 +52,12 @@ SocOcvCurveOptimizable<T>::SocOcvCurveOptimizable() {
 }
 
 template<typename T>
-T* SocOcvCurveOptimizable<T>::makeModel(const OcvSocData& data, const Eigen::VectorXd& params) {
+T* SocOcvCurveOptimizer<T>::makeModel(const OcvSocData& data, const Eigen::VectorXd& params) {
     return new T(data, params);
 }
 
 template<typename T>
-double SocOcvCurveOptimizable<T>::getObjectiveValue(const Eigen::VectorXd& params) {
+double SocOcvCurveOptimizer<T>::getObjectiveValue(const Eigen::VectorXd& params) {
     T* model = makeModel(train, params);
 
     int n = validation.soc.size(); 
@@ -72,7 +72,7 @@ double SocOcvCurveOptimizable<T>::getObjectiveValue(const Eigen::VectorXd& param
 }
 
 template<typename T>
-void SocOcvCurveOptimizable<T>::display(const Eigen::VectorXd& params) {
+void SocOcvCurveOptimizer<T>::display(const Eigen::VectorXd& params) {
     T* model = makeModel(train, params);
 
     int n = test.soc.size(); 
@@ -96,6 +96,79 @@ void SocOcvCurveOptimizable<T>::display(const Eigen::VectorXd& params) {
     std::cout << "OCV mean \t\t " << mean << "\n";
     std::cout << "Mean squared error \t " << MSE << "\n";  // Fixed: spelling
     std::cout << "1 - R^2 \t\t " << R2_leftover << "\n";  // Fixed: was MSE
+}
+
+
+template<typename T>
+class BayesOptObjective : public bayesopt::ContinuousModel {
+public:
+    BayesOptObjective(SocOcvCurveOptimizer<T>* optimizer) : 
+        ContinuousModel(T::getParamsCount(), bayesopt::Parameters()), optimizer_(optimizer) {
+        
+        // Set parameter bounds
+        lower_bounds = T::getLowerBounds();
+        upper_bounds = T::getUpperBounds();
+        
+        mParameters.n_iterations = 100;        // Reduce iterations
+        mParameters.n_init_samples = 100;       // More initial exploration
+        mParameters.alpha = 0.1;               // Increase exploration
+        mParameters.noise = 1e-6;              // Add noise to prevent overfitting
+        
+        //mParameters.alpha = 5e-3;               // Reduced alpha for better exploration
+        //mParameters.force_jump = 3;
+
+        // rest are defult.
+        
+        // Set random seed for reproducibility
+        //mParameters.random_seed = 1;
+    }
     
+    double evaluateSample(const vectord& x) override {
+        // Convert vectord to Eigen::VectorXd
+        Eigen::VectorXd params(x.size());
+        for(size_t i = 0; i < x.size(); ++i) {
+            params(i) = x[i] * (upper_bounds[i] - lower_bounds[i]) + lower_bounds[i];
+        }
+        
+        // Call the optimizer's objective function
+        return optimizer_->getObjectiveValue(params);
+    }
     
+private:
+    SocOcvCurveOptimizer<T>* optimizer_;
+    Eigen::VectorXd lower_bounds;
+    Eigen::VectorXd upper_bounds;
+};
+
+template<typename T>
+void SocOcvCurveOptimizer<T>::optimize() {
+    std::cout << "Starting Bayesian Optimization..." << std::endl;
+
+    BayesOptObjective<T> objective(this);
+
+    vectord result(T::getParamsCount());
+    objective.optimize(result);
+    
+    // Convert result back to Eigen format
+    Eigen::VectorXd optimal_params(T::getParamsCount());
+    for(int i = 0; i < T::getParamsCount(); ++i) {
+        optimal_params(i) = result[i];
+    }
+    
+    // Display optimization results
+    std::cout << "\nOptimization completed!" << std::endl;
+    std::cout << "Optimal parameters:" << std::endl;
+
+    Eigen::VectorXd lower_bounds = T::getLowerBounds();
+    Eigen::VectorXd upper_bounds = T::getUpperBounds();
+    for(int i = 0; i < T::getParamsCount(); ++i) {
+        std::cout << "  param[" << i << "] = " << optimal_params(i) * (upper_bounds[i] - lower_bounds[i]) + lower_bounds[i] << std::endl;
+    }
+    
+    double final_objective = getObjectiveValue(optimal_params);
+    std::cout << "Final objective value (MSE): " << final_objective << std::endl;
+    
+    // Display final model performance on test set
+    std::cout << "\nFinal model performance on test set:" << std::endl;
+    display(optimal_params);
 }

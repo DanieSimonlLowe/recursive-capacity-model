@@ -1,10 +1,10 @@
-#include "socOcv/SocOcvCurveOptimizable.h"
-#include "socOcv/CubicSplineSocOcvCurve.h"
+#include "socOcv/SocOcvCurveOptimizer.h"
+#include "socOcv/LeastSquaresSocOcvCurve.h"
 
-#include <chrono>
+
 int main(int argc, char **argv) { 
 
-    (new SocOcvCurveOptimizable<CubicSplineSocOcvCurve>())->display();
+    (new SocOcvCurveOptimizer<LeastSquaresSocOcvCurve>())->optimize();
 }
 
     //(new InterpolatorEvaluator(new PolySineEKFInterpolator(0.1,2,0.1,0.1,10,10)))->printResults(); 

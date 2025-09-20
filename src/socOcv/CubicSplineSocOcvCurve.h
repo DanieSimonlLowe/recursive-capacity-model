@@ -1,4 +1,5 @@
 #pragma once
+#include <cstddef>
 #include "socOcv/SocOcvCurveBase.h"
 #include "algorithms/cubicSpline.h"
 
@@ -6,8 +7,12 @@ class CubicSplineSocOcvCurve: SocOcvCurveBase {
     public:
         CubicSplineSocOcvCurve(const OcvSocData &data, const Eigen::VectorXd& params = Eigen::VectorXd());
 
-        double getOcv(double soc) override;
-        double getOcvSocDerivative(double soc) override;
+        double getOcv(double soc);
+        double getOcvSocDerivative(double soc);
+
+        static size_t getParamsCount() { return 0; };
+        static const Eigen::VectorXd getLowerBounds() { return Eigen::VectorXd(); };
+        static const Eigen::VectorXd getUpperBounds() { return Eigen::VectorXd(); };
     
     private:
         CubicSpline *spline;
