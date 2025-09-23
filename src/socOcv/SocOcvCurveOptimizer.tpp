@@ -106,16 +106,16 @@ public:
         ContinuousModel(T::getParamsCount(), bayesopt::Parameters()), optimizer_(optimizer) {
         
         // Set parameter bounds
-        lower_bounds = T::getLowerBounds();
-        upper_bounds = T::getUpperBounds();
+        lower_bounds_ = T::getLowerBounds();
+        upper_bounds_ = T::getUpperBounds();
         
-        mParameters.n_iterations = 100;        // Reduce iterations
-        mParameters.n_init_samples = 100;       // More initial exploration
-        mParameters.alpha = 0.1;               // Increase exploration
+        mParameters.n_iterations = 250;        // Reduce iterations
+        mParameters.n_init_samples = 50;       // More initial exploration
+        //mParameters.alpha = 0.1;               // Increase exploration
         mParameters.noise = 1e-6;              // Add noise to prevent overfitting
         
-        //mParameters.alpha = 5e-3;               // Reduced alpha for better exploration
-        //mParameters.force_jump = 3;
+        mParameters.surr_name = "sStudentTProcessNIG";  
+        mParameters.force_jump = 3;
 
         // rest are defult.
         
@@ -127,17 +127,23 @@ public:
         // Convert vectord to Eigen::VectorXd
         Eigen::VectorXd params(x.size());
         for(size_t i = 0; i < x.size(); ++i) {
-            params(i) = x[i] * (upper_bounds[i] - lower_bounds[i]) + lower_bounds[i];
+            params(i) = x[i] * (upper_bounds_[i] - lower_bounds_[i]) + lower_bounds_[i];
         }
         
         // Call the optimizer's objective function
-        return optimizer_->getObjectiveValue(params);
+        double result = optimizer_->getObjectiveValue(params);
+
+        if (!std::isfinite(result) || result > 1e8) {
+            return 1e8; // Return large penalty for invalid results
+        }
+
+        return result;
     }
     
 private:
     SocOcvCurveOptimizer<T>* optimizer_;
-    Eigen::VectorXd lower_bounds;
-    Eigen::VectorXd upper_bounds;
+    Eigen::VectorXd lower_bounds_;
+    Eigen::VectorXd upper_bounds_;
 };
 
 template<typename T>
@@ -150,19 +156,20 @@ void SocOcvCurveOptimizer<T>::optimize() {
     objective.optimize(result);
     
     // Convert result back to Eigen format
+    Eigen::VectorXd lower_bounds = T::getLowerBounds();
+    Eigen::VectorXd upper_bounds = T::getUpperBounds();
     Eigen::VectorXd optimal_params(T::getParamsCount());
     for(int i = 0; i < T::getParamsCount(); ++i) {
-        optimal_params(i) = result[i];
+        optimal_params(i) = result[i] * (upper_bounds[i] - lower_bounds[i]) + lower_bounds[i];
     }
     
     // Display optimization results
     std::cout << "\nOptimization completed!" << std::endl;
     std::cout << "Optimal parameters:" << std::endl;
 
-    Eigen::VectorXd lower_bounds = T::getLowerBounds();
-    Eigen::VectorXd upper_bounds = T::getUpperBounds();
+    
     for(int i = 0; i < T::getParamsCount(); ++i) {
-        std::cout << "  param[" << i << "] = " << optimal_params(i) * (upper_bounds[i] - lower_bounds[i]) + lower_bounds[i] << std::endl;
+        std::cout << "  param[" << i << "] = " << optimal_params(i) << std::endl;
     }
     
     double final_objective = getObjectiveValue(optimal_params);
