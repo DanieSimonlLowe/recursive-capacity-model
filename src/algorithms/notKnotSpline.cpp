@@ -74,3 +74,26 @@ double NotKnotSpline::predict(double time) {
 
     return term1 + term2 + term3 + term4;
 }
+
+
+double NotKnotSpline::derivative(double time) { 
+    int n = t.size();
+    const double* begin = t.data();
+    const double* end = begin + n;
+    const double* it = std::upper_bound(begin, end, time); // first element > time
+    int i0 = static_cast<int>(it - begin) - 1;
+    int i1 = i0 + 1;
+
+    double t0 = t(i0), t1 = t(i1);
+
+    double h = t1 - t0;
+
+    double xi = time;
+
+    double term1 = M(i0) * -3.0 * std::pow(t1 - xi, 2) / (6.0 * h);
+    double term2 = M(i1) * 3.0 * std::pow(xi - t0, 2) / (6.0 * h);
+    double term3 = (y(i0) - M(i0) * h * h / 6.0) * -1 / h;
+    double term4 = (y(i1) - M(i1) * h * h / 6.0) * 1 / h;
+
+    return term1 + term2 + term3 + term4;
+}

@@ -1,8 +1,38 @@
-# CubicSplineSocOcvCurve
+# CubicSplineSoc OcvCurve
 OCV variance             0.0959291
 OCV mean                 3.71098
 Mean squared error       8.48757e-07
 1 - R^2                  8.84775e-06
+
+# NotKnotSplineSoc OcvCurve
+OCV variance             0.0959291
+OCV mean                 3.71098
+Mean squared error       2.12849e-06
+1 - R^2                  2.21882e-05
+
+# LookUpTableSocOcvCurve
+OCV variance             0.0959291
+OCV mean                 3.71098
+Mean squared error       0.000101976
+1 - R^2                  0.00106304
+
+# FritschCarlsonSpline OcvSoc
+OCV variance             0.0959291
+OCV mean                 3.71098
+Mean squared error       2.87892e-07
+1 - R^2                  3.00109e-06
+
+# AkimaSpline OcvSoc
+OCV variance             0.0959291
+OCV mean                 3.71098
+Mean squared error       2.70638e-07
+1 - R^2                  2.82123e-06
+
+
+https://www.sciencedirect.com/science/article/abs/pii/S009630031200906X
+
+file:///C:/Users/Danie/Downloads/Monotone-BSpline-smoothing.pdf
+
 
 # LogExpOcvSocCurve
 Optimal parameters:

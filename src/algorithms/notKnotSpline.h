@@ -7,6 +7,8 @@ class NotKnotSpline {
         NotKnotSpline(const Eigen::VectorXd& t, const Eigen::VectorXd& y);
 
         double predict(double time);
+
+        double derivative(double time);
     private:
         Eigen::VectorXd M;
         Eigen::VectorXd y;
