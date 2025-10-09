@@ -1,11 +1,18 @@
 #include "socOcv/SocOcvCurveOptimizer.h"
-#include "socOcv/SplineOcvSoc.h"
-#include "algorithms/AkimaSpline.h"
+#include "socOcv/PolySplineOcvSoc.h"
 
 
 int main(int argc, char **argv) { 
 
-    (new SocOcvCurveOptimizer<SplineOcvSoc<AkimaSpline>>())->display();
+    Eigen::VectorXd value(1);
+    value[0] = 3;
+    (new SocOcvCurveOptimizer<PolySplineOcvSoc>())->display(value);
+    value[0] = 5;
+    (new SocOcvCurveOptimizer<PolySplineOcvSoc>())->display(value);
+    value[0] = 7;
+    (new SocOcvCurveOptimizer<PolySplineOcvSoc>())->display(value);
+    value[0] = 9;
+    (new SocOcvCurveOptimizer<PolySplineOcvSoc>())->display(value);
     //(new NotKnotSplineSocOcvCurve())->display();
 }
 

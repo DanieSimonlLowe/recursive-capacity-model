@@ -28,11 +28,32 @@ OCV mean                 3.71098
 Mean squared error       2.70638e-07
 1 - R^2                  2.82123e-06
 
+# PolynomialSpline 3
+OCV variance             0.0959291
+OCV mean                 3.71098
+Mean squared error       7.66329e-07
+1 - R^2                  7.9885e-06
 
-https://www.sciencedirect.com/science/article/abs/pii/S009630031200906X
+# PolynomialSpline 5
+OCV variance             0.0959291
+OCV mean                 3.71098
+Mean squared error       1.5175e-05
+1 - R^2                  0.00015819
 
-file:///C:/Users/Danie/Downloads/Monotone-BSpline-smoothing.pdf
+# PolynomialSpline 7
+OCV variance             0.0959291
+OCV mean                 3.71098
+Mean squared error       9.31185e-07
+1 - R^2                  9.70702e-06
 
+
+# PolynomialSpline 9
+OCV variance             0.0959291
+OCV mean                 3.71098
+Mean squared error       2.05401e-06
+1 - R^2                  2.14117e-05
+
+https://tchlux.github.io/papers/tchlux-2019-HPC-1.pdf
 
 # LogExpOcvSocCurve
 Optimal parameters:
