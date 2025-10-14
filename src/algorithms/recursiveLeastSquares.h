@@ -3,17 +3,17 @@
 
 class RecursiveLeastSquares {
     public:
-        RecursiveLeastSquares(size_t dimension, double forgettingFactor, double initialCovariance);
-        virtual void update(Eigen::VectorXd x, double y);
+        RecursiveLeastSquares(size_t dimension, double forgettingFactor=1, double initialCovariance=1);
+        void update(Eigen::VectorXd x, double y);
         const Eigen::VectorXd getState();
         const Eigen::MatrixXd getCovariance();
         void multCovariance(double mult);
 
-        virtual void setParams(Eigen::VectorXd& params); 
-        virtual size_t getParamsCount();
-        virtual Eigen::VectorXd getLowerBounds();
-        virtual Eigen::VectorXd getUpperBounds();
-        virtual RecursiveLeastSquares* clone();
+        void setParams(Eigen::VectorXd& params); 
+        
+        static size_t getParamsCount();
+        static Eigen::VectorXd getLowerBounds();
+        static Eigen::VectorXd getUpperBounds();
 
     protected:
         Eigen::MatrixXd covariance;

@@ -67,4 +67,8 @@ Current         MSE 6.39878e-05  1-R^2 7.54473e-05        Var: 0.848113
 Voltage         MSE 0.000441548  1-R^2 0.0091     Var: 0.0485217
 Temperature     MSE 4.46601e-05  1-R^2 6.02622e-06        Var: 7.41095
 
-
+AkimaSplineInterpolator
+Window Size 50
+Current         MSE 3.90979e-05  1-R^2 4.75699e-05      Var: 0.821905
+Voltage         MSE 0.000303107  1-R^2 0.00675616       Var: 0.0448637
+Temperature     MSE 4.17838e-05  1-R^2 5.77133e-06      Var: 7.23989

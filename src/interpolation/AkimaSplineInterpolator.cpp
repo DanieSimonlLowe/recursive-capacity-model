@@ -1,8 +1,8 @@
 
-#include "interpolation/NotKnotSplineInterpolator.h"
-#include "algorithms/splines/notKnotSpline.h"
+#include "interpolation/AkimaSplineInterpolator.h"
 
-NotKnotSplineInterpolator::NotKnotSplineInterpolator(double ts, unsigned int windowSize) :
+
+AkimaSplineInterpolator::AkimaSplineInterpolator(double ts, unsigned int windowSize) :
      InterpolatorBase(),
     windowSize(windowSize) {
     times = std::vector<double>();
@@ -10,8 +10,7 @@ NotKnotSplineInterpolator::NotKnotSplineInterpolator(double ts, unsigned int win
     spline = nullptr;
 };
 
-void NotKnotSplineInterpolator::update(double measurement, double time) {
-
+void AkimaSplineInterpolator::update(double measurement, double time) {
     times.push_back(time);
     measurements.push_back(measurement);
     if (times.size() > windowSize) {
@@ -21,18 +20,17 @@ void NotKnotSplineInterpolator::update(double measurement, double time) {
     spline.reset();
 }
 
-NotKnotSplineInterpolator* NotKnotSplineInterpolator::clone() {
-    return new NotKnotSplineInterpolator(0.1,windowSize);
+AkimaSplineInterpolator* AkimaSplineInterpolator::clone() {
+    return new AkimaSplineInterpolator(timeStepSize, windowSize);
 }
 
-double NotKnotSplineInterpolator::predict(double time) {
-    // Eigen::Map requires contiguous memory and non-zero size
 
-    //NotKnotSpline spline(tvec, yvec);
-    if (!spline) {
+double AkimaSplineInterpolator::predict(double time) {
+    // Eigen::Map requires contiguous memory and non-zero size
+   if (!spline) {
         Eigen::Map<const Eigen::VectorXd> tvec(times.data(), static_cast<int>(times.size()));
         Eigen::Map<const Eigen::VectorXd> yvec(measurements.data(), static_cast<int>(measurements.size()));
-        spline = std::make_unique<NotKnotSpline>(tvec, yvec);
+        spline = std::make_unique<AkimaSpline>(tvec, yvec);
         double last_m = measurements.back();
         double last_t = times.back();
         measurements.clear();
@@ -43,13 +41,14 @@ double NotKnotSplineInterpolator::predict(double time) {
     return spline->predict(time);
 }
 
-bool NotKnotSplineInterpolator::canPredict() {
-    return times.size() >= windowSize - 1;
+bool AkimaSplineInterpolator::canPredict() {
+    return times.size() > windowSize - 1;
 }
 
-void NotKnotSplineInterpolator::reset() {
+void AkimaSplineInterpolator::reset() {
     times.clear();
     measurements.clear();
     spline.reset(); 
+
 }
 

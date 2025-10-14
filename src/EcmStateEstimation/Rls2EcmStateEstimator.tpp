@@ -1,11 +1,16 @@
-#include "RLS2ECMStateEstimator.h"
 
-RLS2ECMStateEstimator::RLS2ECMStateEstimator(RecursiveLeastSquares* rsl, double deltaTime) : 
-    rls(rls), deltaTime(deltaTime) {
+
+template<typename RLS>
+Rls2EcmStateEstimator<RLS>::Rls2EcmStateEstimator(Eigen::VectorXd& params) : 
+    {
     stateCalculated = false;
+    deltaTime = 0;
+    rls = new RLS(5);
+    rls->setParams(params);
 }
 
-void RLS2ECMStateEstimator::update(const std::vector<double> current, 
+template<typename RLS>
+void Rls2EcmStateEstimator<RLS>::update(const std::vector<double> current, 
                     const std::vector<double> voltage) {
     size_t n = current.size(); // all are same length
     for (size_t i = 2; i < n; ++i) {
@@ -22,7 +27,8 @@ void RLS2ECMStateEstimator::update(const std::vector<double> current,
 // a: ohmic resistance term
 // b, c: coefficients of quadratic for time constants
 // d, f: intermediate variables for RC branch resistances
-void RLS2ECMStateEstimator::calculateState() {
+template<typename RLS>
+void Rls2EcmStateEstimator<RLS>::calculateState() {
     Eigen::VectorXd weights =  rls->getState();
     double a = (weights[3] - weights[2] - weights[4]) / (1 + weights[0] - weights[1]);
     double b = deltaTime * deltaTime * (1 + weights[0] - weights[1]) / (4 * (1 - weights[0] - weights[1]));
@@ -42,7 +48,8 @@ void RLS2ECMStateEstimator::calculateState() {
     stateCalculated = true;
 }
 
-bool RLS2ECMStateEstimator::canCalculateState() const {
+template<typename RLS>
+bool Rls2EcmStateEstimator<RLS>::canCalculateState() const {
     Eigen::VectorXd weights =  rls->getState();
     if (weights[0] - weights[1] == -1) return false;
     if (weights[0] + weights[1] == 1) return false;
@@ -73,23 +80,47 @@ bool RLS2ECMStateEstimator::canCalculateState() const {
     return true;
 }
 
-double RLS2ECMStateEstimator::getOhmicResistance() {
+template<typename RLS>
+double Rls2EcmStateEstimator<RLS>::getOhmicResistance() {
     if (!stateCalculated) {
         calculateState();
     }
     return R0;
 }
 
-const std::vector<double> RLS2ECMStateEstimator::getBranchResistances() {
+template<typename RLS>
+const std::vector<double> Rls2EcmStateEstimator<RLS>::getBranchResistances() {
     if (!stateCalculated) {
         calculateState();
     }
     return {R1, R2};
 }
 
-const std::vector<double> RLS2ECMStateEstimator::getBranchCapacities() {
+template<typename RLS>
+const std::vector<double> Rls2EcmStateEstimator<RLS>::getBranchCapacities() {
     if (!stateCalculated) {
         calculateState();
     }
     return {C1, C2};
+}
+
+
+template<typename RLS>
+void Rls2EcmStateEstimator<RLS>::setDeltaTime(double deltaTime) {
+    this->deltaTime = deltaTime;
+}
+
+template<typename RLS>
+static size_t Rls2EcmStateEstimator<RLS>::getParamsCount() {
+    RLS::getParamsCount();
+}
+
+template<typename RLS>
+static const Eigen::VectorXd Rls2EcmStateEstimator<RLS>::getLowerBounds() {
+    RLS::getLowerBounds();
+}
+
+template<typename RLS>
+static const Eigen::VectorXd Rls2EcmStateEstimator<RLS>::getUpperBounds() {
+    RLS::getUpperBounds();
 }

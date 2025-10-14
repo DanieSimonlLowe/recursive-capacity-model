@@ -52,6 +52,9 @@ void RecursiveLeastSquares::multCovariance(double mult) {
 void RecursiveLeastSquares::setParams(Eigen::VectorXd& params) {
     forgettingFactor = 1 - 1/params[0];
     initialCovariance = pow(10,params(1));
+    // reset.
+    covariance = Eigen::MatrixXd::Identity(dimension,dimension) * initialCovariance;
+    state = Eigen::VectorXd::Zero(dimension);
 }
 
 size_t RecursiveLeastSquares::getParamsCount() {
@@ -73,7 +76,3 @@ Eigen::VectorXd RecursiveLeastSquares::getUpperBounds() {
     
     return lower;
 }
-
-RecursiveLeastSquares* RecursiveLeastSquares::clone() {
-    return new RecursiveLeastSquares(dimension,forgettingFactor, initialCovariance);
-} 

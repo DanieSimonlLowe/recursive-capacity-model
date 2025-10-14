@@ -1,4 +1,4 @@
-#include "algorithms/cubicSpline.h"
+#include "algorithms/splines/cubicSpline.h"
 
 CubicSpline::CubicSpline(const Eigen::VectorXd& t, const Eigen::VectorXd& y) {
     const int n = t.size();

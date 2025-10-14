@@ -16,4 +16,10 @@ class ECMStateEstimator {
     
         virtual void update(const std::vector<double> current, 
                     const std::vector<double> voltage);
+
+        virtual void setDeltaTime(double deltaTime);
+
+        //virtual size_t getParamsCount() { return 0; };
+        //virtual const Eigen::VectorXd getLowerBounds() { return Eigen::VectorXd(); };
+        //virtual const Eigen::VectorXd getUpperBounds() { return Eigen::VectorXd(); };
 };

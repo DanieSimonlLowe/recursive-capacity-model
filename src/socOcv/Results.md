@@ -1,3 +1,5 @@
+AkimaSpline outproformed all others, followed closly by FritschCarlsonSpline as diffrance is very small and FritschCarlsonSpline is garnateed to be montone I will use that.
+
 # CubicSplineSoc OcvCurve
 OCV variance             0.0959291
 OCV mean                 3.71098

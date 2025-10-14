@@ -1,5 +1,5 @@
 #pragma once
-#include "algorithms/PolynomialSpline.h"
+#include "algorithms/splines/PolynomialSpline.h"
 #include "socOcv/SocOcvCurveBase.h"
 
 class PolySplineOcvSoc: SocOcvCurveBase {

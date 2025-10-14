@@ -1,20 +1,24 @@
 #pragma once
 #include <cmath>
 #include <Eigen/Dense>
-#include "ECMStateEstimator.h"
-#include "algorithms/recursiveLeastSquares.h"
+#include "EcmStateEstimation/ECMStateEstimator.h"
 
 
-// RLS2ECMStateEstimator: Estimates battery states using Recursive Least Squares (RLS) 
+
+
+// Rls2EcmStateEstimator: Estimates battery states using Recursive Least Squares (RLS) 
 // with a second-order Equivalent Circuit Model (2ECM).
 // https://www.mdpi.com/1996-1073/12/12/2242
-class RLS2ECMStateEstimator : public  ECMStateEstimator {
+template<typename RLS>
+class Rls2EcmStateEstimator : public  ECMStateEstimator {
     public:
-        RLS2ECMStateEstimator(RecursiveLeastSquares* rls, double deltaTime);
+        Rls2EcmStateEstimator(Eigen::VectorXd& params);
 
         void update(const std::vector<double> current, 
                     const std::vector<double> voltage) override;
 
+        void setDeltaTime(double deltaTime) override;
+        
         double getOhmicResistance() override;
         
         const std::vector<double> getBranchResistances() override;
@@ -22,12 +26,16 @@ class RLS2ECMStateEstimator : public  ECMStateEstimator {
         const std::vector<double>  getBranchCapacities() override;
     
         bool canCalculateState() const override;
+        
+        static size_t getParamsCount();
+        static const Eigen::VectorXd getLowerBounds();
+        static const Eigen::VectorXd getUpperBounds();
     
     private:
         bool stateCalculated;
         void calculateState();
         
-        RecursiveLeastSquares* rls;
+        RLS* rls;
         double deltaTime;
 
         double R0;
@@ -37,3 +45,4 @@ class RLS2ECMStateEstimator : public  ECMStateEstimator {
         double C2;
 };
 
+#include "EcmStateEstimation/Rls2EcmStateEstimator.tpp"

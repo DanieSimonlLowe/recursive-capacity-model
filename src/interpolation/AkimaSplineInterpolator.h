@@ -1,15 +1,15 @@
 #pragma once
 #include "interpolation/interpolatorBase.h"
 #include <Eigen/Dense>
-#include "algorithms/splines/cubicSpline.h"
+#include "algorithms/splines/AkimaSpline.h"
 #include <vector>
 #include <memory>
 
-class CubicSplineInterpolator : public InterpolatorBase {
+class AkimaSplineInterpolator : public InterpolatorBase {
     public:
-        CubicSplineInterpolator(double ts, unsigned int windowSize);
+        AkimaSplineInterpolator(double ts, unsigned int windowSize);
 
-        CubicSplineInterpolator* clone() override;
+        AkimaSplineInterpolator* clone() override;
 
         double predict(double time) override;
         void update(double measurement, double time) override;
@@ -21,6 +21,6 @@ class CubicSplineInterpolator : public InterpolatorBase {
 
         std::vector<double> times;
         std::vector<double> measurements;
-        std::unique_ptr<CubicSpline> spline;
+        std::unique_ptr<AkimaSpline> spline;
 };
 
