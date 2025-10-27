@@ -30,6 +30,7 @@ class Rls2EcmStateEstimator : public  ECMStateEstimator {
         static size_t getParamsCount();
         static const Eigen::VectorXd getLowerBounds();
         static const Eigen::VectorXd getUpperBounds();
+        static const int getDimension();
     
     private:
         bool stateCalculated;

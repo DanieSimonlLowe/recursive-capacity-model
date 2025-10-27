@@ -7,8 +7,8 @@ class SplineOcvSoc: SocOcvCurveBase {
     public:
         SplineOcvSoc(const OcvSocData &data, const Eigen::VectorXd& params = Eigen::VectorXd());
 
-        double getOcv(double soc);
-        double getOcvSocDerivative(double soc);
+        double getOcv(double soc) override;
+        double getOcvSocDerivative(double soc) override;
 
         static size_t getParamsCount() { return 0; };
         static const Eigen::VectorXd getLowerBounds() { return Eigen::VectorXd(); };

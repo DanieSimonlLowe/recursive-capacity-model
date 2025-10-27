@@ -124,3 +124,8 @@ template<typename RLS>
 static const Eigen::VectorXd Rls2EcmStateEstimator<RLS>::getUpperBounds() {
     RLS::getUpperBounds();
 }
+
+template<typename RLS>
+static const int Rls2EcmStateEstimator<RLS>::getDimension() {
+    return 2;
+}

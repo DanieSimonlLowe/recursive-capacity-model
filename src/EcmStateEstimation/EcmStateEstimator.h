@@ -19,7 +19,7 @@ class ECMStateEstimator {
 
         virtual void setDeltaTime(double deltaTime);
 
-        //virtual size_t getParamsCount() { return 0; };
-        //virtual const Eigen::VectorXd getLowerBounds() { return Eigen::VectorXd(); };
-        //virtual const Eigen::VectorXd getUpperBounds() { return Eigen::VectorXd(); };
+        //static size_t getParamsCount() { return 0; };
+        //static const Eigen::VectorXd getLowerBounds() { return Eigen::VectorXd(); };
+        //static const Eigen::VectorXd getUpperBounds() { return Eigen::VectorXd(); };
 };
