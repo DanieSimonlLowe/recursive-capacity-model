@@ -5,7 +5,7 @@
 #include "socOcv/SocOcvCurveBase.h"
 #include "algorithms/LeastSquares.h"
 
-class NegPolyLsSocOcvCurve: SocOcvCurveBase {
+class NegPolyLsSocOcvCurve: public SocOcvCurveBase {
     public:
         NegPolyLsSocOcvCurve(const OcvSocData &data, const Eigen::VectorXd& params = Eigen::VectorXd());
 

@@ -10,11 +10,14 @@
 #include "CapacityEstimation/RlsCapacityEstimator.h"
 
 
-int main(int argc, char **argv) { 
+int main(int argc, char **argv) {
+
+    Eigen::VectorXd value = Eigen::VectorXd::Zero(50);
+
     BatteryModel<Rls2EcmStateEstimator<RecursiveLeastSquares>,
     FastCubicSplineInterpolator,FastCubicSplineInterpolator,
     SplineOcvSoc<AkimaSpline>,EkfSocEstimator,
-    RlsCapacityEstimator<RecursiveLeastSquares>> model;
+    RlsCapacityEstimator<RecursiveLeastSquares>> model(2,value);
     
 }
 

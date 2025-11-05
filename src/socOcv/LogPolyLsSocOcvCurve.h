@@ -7,7 +7,7 @@
 
 // https://arxiv.org/pdf/2306.16542
 // Nernst model added paramters reduces to the model in the paper when power is 0.
-class LogPolyLsSocOcvCurve: SocOcvCurveBase {
+class LogPolyLsSocOcvCurve: public SocOcvCurveBase {
     public:
         LogPolyLsSocOcvCurve(const OcvSocData &data, const Eigen::VectorXd& params = Eigen::VectorXd());
 

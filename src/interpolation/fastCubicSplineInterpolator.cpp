@@ -1,6 +1,6 @@
 #include "interpolation/fastCubicSplineInterpolator.h"
 
-FastCubicSplineInterpolator::FastCubicSplineInterpolator(double ts): InterpolatorBase() {
+FastCubicSplineInterpolator::FastCubicSplineInterpolator(Eigen::VectorXd params): InterpolatorBase() {
     position = 0;
     isSetup = false;
     i = 0;
@@ -8,10 +8,6 @@ FastCubicSplineInterpolator::FastCubicSplineInterpolator(double ts): Interpolato
     for (int i = 0; i < CUBIC_SPLINE_WINDOW_SIZE; ++i) {
         M[i] = 0.0;
     }
-}
-
-FastCubicSplineInterpolator* FastCubicSplineInterpolator::clone() {
-    return new FastCubicSplineInterpolator(timeStepSize);
 }
 
 void FastCubicSplineInterpolator::update(double measurement, double time) {
@@ -164,4 +160,17 @@ double FastCubicSplineInterpolator::predict(double time) {
     
     return a * measurements[i] + b * measurements[i+1] +
            ((a*a*a - a) * M[i] + (b*b*b - b) * M[i+1]) * (h*h) / 6.0;
+}
+
+
+size_t FastCubicSplineInterpolator::getParamsCount() {
+    return 0;
+}
+
+Eigen::VectorXd FastCubicSplineInterpolator::getLowerBounds() {
+    return Eigen::VectorXd::Ones(0);
+}
+
+Eigen::VectorXd FastCubicSplineInterpolator::getUpperBounds() {
+    return Eigen::VectorXd::Ones(0);
 }

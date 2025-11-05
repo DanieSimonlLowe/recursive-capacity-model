@@ -7,7 +7,7 @@ class CapacityEstimatorBase {
     public:
         ~CapacityEstimatorBase() = default;
 
-        virtual void update(double current, double deltaTime, double diffSoc);
+        virtual void update(double current, double deltaTime, double diffSoc) = 0;
 
         virtual double getCapacity() = 0;
 

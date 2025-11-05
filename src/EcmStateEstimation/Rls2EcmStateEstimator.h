@@ -12,10 +12,10 @@
 template<typename RLS>
 class Rls2EcmStateEstimator : public  ECMStateEstimator {
     public:
-        Rls2EcmStateEstimator(Eigen::VectorXd& params);
+        Rls2EcmStateEstimator(const Eigen::VectorXd& params);
 
-        void update(const std::vector<double> current, 
-                    const std::vector<double> voltage) override;
+        void update(const Eigen::VectorXd& current, 
+                    const Eigen::VectorXd& voltage) override;
 
         void setDeltaTime(double deltaTime) override;
         

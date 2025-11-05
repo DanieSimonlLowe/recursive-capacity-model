@@ -2,7 +2,7 @@
 #include <cstddef>
 #include "socOcv/SocOcvCurveBase.h"
 
-class LookUpTableSocOcvCurve: SocOcvCurveBase {
+class LookUpTableSocOcvCurve: public SocOcvCurveBase {
     public:
         LookUpTableSocOcvCurve(const OcvSocData &data, const Eigen::VectorXd& params = Eigen::VectorXd());
 

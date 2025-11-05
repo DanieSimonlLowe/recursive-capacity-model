@@ -1,5 +1,5 @@
 #pragma once
-#include <vector>
+#include <Eigen/Dense>
 
 
 class ECMStateEstimator {
@@ -14,10 +14,10 @@ class ECMStateEstimator {
 
         virtual bool canCalculateState() const = 0;
     
-        virtual void update(const std::vector<double> current, 
-                    const std::vector<double> voltage);
+        virtual void update(const Eigen::VectorXd& current, 
+                    const Eigen::VectorXd& voltage) = 0;
 
-        virtual void setDeltaTime(double deltaTime);
+        virtual void setDeltaTime(double deltaTime) = 0;
 
         //static size_t getParamsCount() { return 0; };
         //static const Eigen::VectorXd getLowerBounds() { return Eigen::VectorXd(); };

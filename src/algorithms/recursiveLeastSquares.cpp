@@ -49,7 +49,7 @@ void RecursiveLeastSquares::multCovariance(double mult) {
     covariance = mult * covariance;
 }
 
-void RecursiveLeastSquares::setParams(Eigen::VectorXd& params) {
+void RecursiveLeastSquares::setParams(const Eigen::VectorXd& params) {
     forgettingFactor = 1 - 1/params[0];
     initialCovariance = pow(10,params(1));
     // reset.

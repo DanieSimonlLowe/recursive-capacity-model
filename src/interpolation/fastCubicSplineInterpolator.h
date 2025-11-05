@@ -6,14 +6,16 @@
 
 class FastCubicSplineInterpolator : public InterpolatorBase {
     public:
-        FastCubicSplineInterpolator(double ts);
-
-        FastCubicSplineInterpolator* clone() override;
-
+        FastCubicSplineInterpolator(Eigen::VectorXd params);
+        
         double predict(double time) override;
         void update(double measurement, double time) override;
         bool canPredict() override;
         void reset() override;
+
+        static size_t getParamsCount();
+        static Eigen::VectorXd getLowerBounds();
+        static Eigen::VectorXd getUpperBounds();
 
     private:
         unsigned int position;

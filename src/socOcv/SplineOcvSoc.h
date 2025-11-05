@@ -3,7 +3,7 @@
 #include "socOcv/SocOcvCurveBase.h"
 
 template<typename T>
-class SplineOcvSoc: SocOcvCurveBase {
+class SplineOcvSoc: public SocOcvCurveBase {
     public:
         SplineOcvSoc(const OcvSocData &data, const Eigen::VectorXd& params = Eigen::VectorXd());
 

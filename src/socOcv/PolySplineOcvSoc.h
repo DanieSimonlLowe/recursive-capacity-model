@@ -2,7 +2,7 @@
 #include "algorithms/splines/PolynomialSpline.h"
 #include "socOcv/SocOcvCurveBase.h"
 
-class PolySplineOcvSoc: SocOcvCurveBase {
+class PolySplineOcvSoc: public SocOcvCurveBase {
     public:
         PolySplineOcvSoc(const OcvSocData &data, const Eigen::VectorXd& params = Eigen::VectorXd());
 

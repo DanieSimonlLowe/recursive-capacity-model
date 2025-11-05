@@ -9,7 +9,7 @@
 
 // algorthim based on 
 // https://www.mdpi.com/1996-1073/9/11/900
-class LogExpOcvSocCurve: SocOcvCurveBase {
+class LogExpOcvSocCurve: public SocOcvCurveBase {
     public:
         LogExpOcvSocCurve(const OcvSocData &data, const Eigen::VectorXd& params);
 

@@ -1,8 +1,7 @@
 
 
 template<typename RLS>
-Rls2EcmStateEstimator<RLS>::Rls2EcmStateEstimator(Eigen::VectorXd& params) : 
-    {
+Rls2EcmStateEstimator<RLS>::Rls2EcmStateEstimator(const Eigen::VectorXd& params) {
     stateCalculated = false;
     deltaTime = 0;
     rls = new RLS(5);
@@ -10,8 +9,8 @@ Rls2EcmStateEstimator<RLS>::Rls2EcmStateEstimator(Eigen::VectorXd& params) :
 }
 
 template<typename RLS>
-void Rls2EcmStateEstimator<RLS>::update(const std::vector<double> current, 
-                    const std::vector<double> voltage) {
+void Rls2EcmStateEstimator<RLS>::update(const Eigen::VectorXd& current, 
+                    const Eigen::VectorXd& voltage) {
     size_t n = current.size(); // all are same length
     for (size_t i = 2; i < n; ++i) {
         // Do something with (c, v, t)
@@ -111,21 +110,21 @@ void Rls2EcmStateEstimator<RLS>::setDeltaTime(double deltaTime) {
 }
 
 template<typename RLS>
-static size_t Rls2EcmStateEstimator<RLS>::getParamsCount() {
-    RLS::getParamsCount();
+size_t Rls2EcmStateEstimator<RLS>::getParamsCount() {
+    return RLS::getParamsCount();
 }
 
 template<typename RLS>
-static const Eigen::VectorXd Rls2EcmStateEstimator<RLS>::getLowerBounds() {
-    RLS::getLowerBounds();
+const Eigen::VectorXd Rls2EcmStateEstimator<RLS>::getLowerBounds() {
+    return RLS::getLowerBounds();
 }
 
 template<typename RLS>
-static const Eigen::VectorXd Rls2EcmStateEstimator<RLS>::getUpperBounds() {
-    RLS::getUpperBounds();
+const Eigen::VectorXd Rls2EcmStateEstimator<RLS>::getUpperBounds() {
+    return RLS::getUpperBounds();
 }
 
 template<typename RLS>
-static const int Rls2EcmStateEstimator<RLS>::getDimension() {
+const int Rls2EcmStateEstimator<RLS>::getDimension() {
     return 2;
 }

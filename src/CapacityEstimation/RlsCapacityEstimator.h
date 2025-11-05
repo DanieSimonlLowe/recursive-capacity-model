@@ -4,7 +4,7 @@
 #include "CapacityEstimation/CapacityEstimatorBase.h"
 
 template<typename  RLS>
-class RlsCapacityEstimator : CapacityEstimatorBase {
+class RlsCapacityEstimator : public CapacityEstimatorBase {
     public:
         RlsCapacityEstimator(const Eigen::VectorXd& params);
 
