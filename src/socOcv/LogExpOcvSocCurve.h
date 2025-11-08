@@ -3,8 +3,8 @@
 #include <cstddef>
 #include <cmath>
 
-#include "socOcv/SocOcvCurveBase.h"
-#include "algorithms/LeastSquares.h"
+#include "SocOcv/SocOcvCurveBase.h"
+#include "Algorithms/LeastSquares.h"
 
 
 // algorthim based on 

@@ -2,8 +2,8 @@
 #include <Eigen/Dense>
 #include <cstddef>
 #include <cmath>
-#include "socOcv/SocOcvCurveBase.h"
-#include "algorithms/LeastSquares.h"
+#include "SocOcv/SocOcvCurveBase.h"
+#include "Algorithms/LeastSquares.h"
 
 class ExpLsSocOcvCurve: public SocOcvCurveBase {
     public:

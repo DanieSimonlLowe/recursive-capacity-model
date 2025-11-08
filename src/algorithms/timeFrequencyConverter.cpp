@@ -1,4 +1,4 @@
-#include "algorithms/timeFrequencyConverter.h"
+#include "Algorithms/TimeFrequencyConverter.h"
 #include <iostream>
 
 TimeFrequencyConverter::TimeFrequencyConverter(const std::vector<double>& input_times, 
@@ -45,7 +45,7 @@ TimeFrequencyConverter::~TimeFrequencyConverter() {
     nfft_finalize(&plan);
 }
 
-// Convert time domain measurements to frequency domain
+// Convert time doMain measurements to frequency doMain
 void TimeFrequencyConverter::timeToFrequency() {
     // Copy measurements to NFFT plan
     for (int j = 0; j < M; j++) {
@@ -58,14 +58,14 @@ void TimeFrequencyConverter::timeToFrequency() {
     
     // Copy results with proper scaling
     // NFFT adjoint needs to be scaled by the time step for proper normalization
-    double dt = time_range / N; // Effective time step for frequency domain
+    double dt = time_range / N; // Effective time step for frequency doMain
     
     for (int k = 0; k < N; k++) {
         frequency_coeffs[k] = std::complex<double>(plan.f_hat[k][0], plan.f_hat[k][1]) * dt;
     }
 }
 
-// Get measurement value at arbitrary time using frequency domain interpolation
+// Get measurement value at arbitrary time using frequency doMain Interpolation
 std::complex<double> TimeFrequencyConverter::getValueAtTime(double target_time, int num_frequencies) {
     // If num_frequencies is 0 or greater than N, use all frequencies
     int frequencies_to_use = (num_frequencies <= 0 || num_frequencies > N) ? N : num_frequencies;
@@ -119,7 +119,7 @@ std::complex<double> TimeFrequencyConverter::getValueAtTime(double target_time, 
     }
 }
 
-// Get frequency domain coefficients
+// Get frequency doMain coefficients
 std::vector<std::complex<double>> TimeFrequencyConverter::getFrequencyCoeffs() {
     return frequency_coeffs;
 }

@@ -2,14 +2,14 @@
 #include <Eigen/Dense>
 #include <vector>
 #include <cmath>
-#include "socOcv/SocOcvCurveBase.h"
+#include "SocOcv/SocOcvCurveBase.h"
 #include "SocEstimation/SocEstimator.h"
-#include "algorithms/extendedKalmanFilter.h"
+#include "Algorithms/ExtendedKalmanFilter.h"
 
 // https://www.mdpi.com/2313-0105/9/12/583
 class EkfSocEstimator : public SocEstimator {
     public:
-        EkfSocEstimator(const int dimension, const double maxValtSq, SocOcvCurveBase* socOcvCurve, const Eigen::VectorXd& params);
+        EkfSocEstimator(const int dimension, const double maxValtSq, SocOcvCurveBase* SocOcvCurve, const Eigen::VectorXd& params);
     
 
         double predictVoltage(const double current, const double deltaTime) override;
@@ -24,13 +24,13 @@ class EkfSocEstimator : public SocEstimator {
     
     private:
         const int dimension;
-        SocOcvCurveBase* socOcvCurve;
+        SocOcvCurveBase* SocOcvCurve;
 
         class HelperEKF: public ExtendedKalmanFilter {
             public:
                 HelperEKF(const Eigen::MatrixXd &processNoise, const Eigen::MatrixXd &measurementNoise, 
                             const Eigen::VectorXd &initialState, const Eigen::MatrixXd &initialCovariance,
-                            const int dimension, SocOcvCurveBase* socOcvCurve, EkfSocEstimator* parent
+                            const int dimension, SocOcvCurveBase* SocOcvCurve, EkfSocEstimator* parent
                         );
 
                 Eigen::VectorXd predictionFunction(const Eigen::VectorXd &state) override;
@@ -43,7 +43,7 @@ class EkfSocEstimator : public SocEstimator {
                 double current;
 
                 const int dimension;
-                SocOcvCurveBase* socOcvCurve;
+                SocOcvCurveBase* SocOcvCurve;
                 Eigen::VectorXd measurementVector;
                 EkfSocEstimator* parent;
 

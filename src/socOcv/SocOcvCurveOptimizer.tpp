@@ -2,7 +2,7 @@
 
 template<typename T>
 SocOcvCurveOptimizer<T>::SocOcvCurveOptimizer() {
-    OcvSocData data = readOcvSocCSV("/mnt/c/Users/Danie/Desktop/project/data/soc_volt_nasa.csv");
+    OcvSocData data = ReadOcvSocCSV("/mnt/c/Users/Danie/Desktop/project/data/soc_volt_nasa.csv");
     
     int n = data.soc.size();
     
@@ -163,7 +163,7 @@ void SocOcvCurveOptimizer<T>::optimize() {
         optimal_params(i) = result[i] * (upper_bounds[i] - lower_bounds[i]) + lower_bounds[i];
     }
     
-    // Display optimization results
+    // Display Optimization results
     std::cout << "\nOptimization completed!" << std::endl;
     std::cout << "Optimal parameters:" << std::endl;
 

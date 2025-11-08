@@ -1,4 +1,4 @@
-#include "optimization/Optimizer.h"
+#include "Optimization/Optimizer.h"
 
 class MSEOptimizer : public bayesopt::ContinuousModel {
 private:
@@ -55,7 +55,7 @@ public:
         auto* optimizable = baseOptimizable->clone();
         optimizable->setParams(eigenParams);
         
-        processNasaCycles("/mnt/c/Users/Danie/Desktop/project/data/B0006.mat", "B0006", *optimizable);
+        ProcessNasaCycles("/mnt/c/Users/Danie/Desktop/project/data/B0006.mat", "B0006", *optimizable);
         
         // Get the objective value from the optimizable object
         // (assuming it has a method to return the objective value after processing)
@@ -77,7 +77,7 @@ public:
     }
 };
 
-// Main function for general hyperparameter optimization
+// Main function for general hyperparameter Optimization
 Eigen::VectorXd bayesianOptimize(HyperparameterOptimizable& optimizable)
 {
     MSEOptimizer optimizer(&optimizable);

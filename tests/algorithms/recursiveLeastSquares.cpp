@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 #include <Eigen/Dense>
-#include "algorithms/recursiveLeastSquares.h"
+#include "Algorithms/RecursiveLeastSquares.h"
 
 class RecursiveLeastSquaresTest : public ::testing::Test {
 protected:

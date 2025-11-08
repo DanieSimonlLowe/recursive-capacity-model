@@ -1,5 +1,5 @@
 #pragma once
-#include "loading/processNasaCycles.h"
+#include "Loading/ProcessNasaCycles.h"
 #include <vector>
 
 class HyperparameterOptimizable: public CycleHandler {

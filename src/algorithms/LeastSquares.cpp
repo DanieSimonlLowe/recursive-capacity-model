@@ -1,4 +1,4 @@
-#include "algorithms/LeastSquares.h"
+#include "Algorithms/LeastSquares.h"
 
 LeastSquares::LeastSquares(const Eigen::MatrixXd& xs, const Eigen::VectorXd& ys, double regularizationConstant) {
     Eigen::MatrixXd xt = xs.transpose();

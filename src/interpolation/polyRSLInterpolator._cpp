@@ -1,4 +1,4 @@
-#include "interpolation/polyRSLInterpolator.h"
+#include "Interpolation/PolyRSLInterpolator.h"
 
 PolyRSLInterpolator::PolyRSLInterpolator(double ts, unsigned int polyDegree, double initialVariance, 
     double forgettingFactor, double resetVarianceMult)

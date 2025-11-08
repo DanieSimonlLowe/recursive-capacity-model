@@ -2,8 +2,8 @@
 #include <type_traits>
 #include <cstddef>
 #include <bayesopt/bayesopt.hpp>
-#include "socOcv/SocOcvCurveBase.h"
-#include "loading/readOcvSocCSV.h"
+#include "SocOcv/SocOcvCurveBase.h"
+#include "Loading/ReadOcvSocCSV.h"
 
 
 template<typename T>
@@ -24,4 +24,4 @@ class SocOcvCurveOptimizer {
         OcvSocData test;        // final unbiased evaluation
 };
 
-#include "socOcv/SocOcvCurveOptimizer.tpp"
+#include "SocOcv/SocOcvCurveOptimizer.tpp"

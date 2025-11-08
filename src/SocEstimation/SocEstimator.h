@@ -1,6 +1,6 @@
 #pragma once
 #include <vector>
-#include "socOcv/SocOcvCurveBase.h"
+#include "SocOcv/SocOcvCurveBase.h"
 
 class SocEstimator {
     public:

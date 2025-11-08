@@ -1,7 +1,7 @@
 #pragma once
-#include "interpolation/interpolatorBase.h"
+#include "Interpolation/InterpolatorBase.h"
 #include <Eigen/Dense>
-#include "algorithms/splines/AkimaSpline.h"
+#include "Algorithms/splines/AkimaSpline.h"
 #include <vector>
 #include <memory>
 

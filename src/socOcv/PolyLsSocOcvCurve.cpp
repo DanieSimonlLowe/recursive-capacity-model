@@ -1,4 +1,4 @@
-#include "socOcv/PolyLsSocOcvCurve.h"
+#include "SocOcv/PolyLsSocOcvCurve.h"
 
 PolyLsSocOcvCurve::PolyLsSocOcvCurve(const OcvSocData &data, const Eigen::VectorXd& params) {
     power = static_cast<int>(params(0));

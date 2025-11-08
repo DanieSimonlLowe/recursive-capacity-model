@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 #include <Eigen/Dense>
-#include "algorithms/LeastSquares.h"
+#include "Algorithms/LeastSquares.h"
 
 using testing::DoubleNear;
 using testing::Pointwise;

@@ -1,13 +1,13 @@
 #pragma once
-#include "interpolation/interpolatorBase.h"
-#include "interpolation/interpolatorEvaluator.h"
-#include "loading/processNasaCycles.h"
+#include "Interpolation/InterpolatorBase.h"
+#include "Interpolation/InterpolatorEvaluator.h"
+#include "Loading/ProcessNasaCycles.h"
 #include <bayesopt/bayesopt.hpp>
 #include <Eigen/Dense>
 
 enum class MSEType { Voltage, Current, Temperature };
 
-Eigen::VectorXd bayesianOptimizeMSE(
+Eigen::VectorXd BayesianOptimizeMSE(
     InterpolatorBase& interpolator,
     MSEType mseType,
     const Eigen::VectorXd& lowerBounds,

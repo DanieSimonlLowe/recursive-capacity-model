@@ -4,7 +4,7 @@
 #include <string>
 
 #include <Eigen/Dense>
-#include "loading/processNasaCycles.h"
+#include "Loading/ProcessNasaCycles.h"
 
 
 using ::testing::Exactly;
@@ -40,5 +40,5 @@ TEST(ProcessNasaCyclesTest, InvokesCorrectHandlerCalls) {
     EXPECT_CALL(mock, onImpedance(_, _)).Times(Exactly(278));
 
     //Call function under test
-    processNasaCycles(fileName, varName, mock);
+    ProcessNasaCycles(fileName, varName, mock);
 }

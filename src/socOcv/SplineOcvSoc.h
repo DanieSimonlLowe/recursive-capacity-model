@@ -1,6 +1,6 @@
 #pragma once
 #include <cstddef>
-#include "socOcv/SocOcvCurveBase.h"
+#include "SocOcv/SocOcvCurveBase.h"
 
 template<typename T>
 class SplineOcvSoc: public SocOcvCurveBase {
@@ -18,4 +18,4 @@ class SplineOcvSoc: public SocOcvCurveBase {
         T *spline;
 };
 
-#include "socOcv/SplineOcvSoc.tpp"
+#include "SocOcv/SplineOcvSoc.tpp"

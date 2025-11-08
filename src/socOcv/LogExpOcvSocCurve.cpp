@@ -1,4 +1,4 @@
-#include "socOcv/LogExpOcvSocCurve.h"
+#include "SocOcv/LogExpOcvSocCurve.h"
 
 LogExpOcvSocCurve::LogExpOcvSocCurve(const OcvSocData &data, const Eigen::VectorXd& params) {
     double learningRate = std::pow(10,params(0)); 
@@ -12,7 +12,7 @@ LogExpOcvSocCurve::LogExpOcvSocCurve(const OcvSocData &data, const Eigen::Vector
     Eigen::VectorXd values(6);
     Eigen::MatrixXd derivative(6,size);
     for (int i = 0; i<size; ++i) {
-        derivative(0,i) = 1; // because remains the same.
+        derivative(0,i) = 1; // because reMains the same.
         derivative(2,i) = data.soc(i);
 
         if (data.soc(i) <= 1e-8) {

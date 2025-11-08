@@ -1,4 +1,4 @@
-#include "socOcv/PolySplineOcvSoc.h"
+#include "SocOcv/PolySplineOcvSoc.h"
 
 PolySplineOcvSoc::PolySplineOcvSoc(const OcvSocData &data, const Eigen::VectorXd& params) {
     int power = params(0);

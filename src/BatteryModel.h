@@ -1,7 +1,7 @@
 #pragma once
-#include "loading/processNasaCycles.h"
-#include "interpolation/interpolatorBase.h"
-#include "loading/readOcvSocCSV.h"
+#include "Loading/ProcessNasaCycles.h"
+#include "Interpolation/InterpolatorBase.h"
+#include "Loading/ReadOcvSocCSV.h"
 
 template<typename  ECMStateEstimator, typename  VoltageInterpolator, typename  CurrentInterpolator, typename  SocOcvCurve, typename  SocEstimator, typename  CapacityEstimator>
 class BatteryModel: public CycleHandler {

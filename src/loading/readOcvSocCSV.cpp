@@ -1,6 +1,6 @@
-#include "loading/readOcvSocCSV.h"
+#include "Loading/ReadOcvSocCSV.h"
 
-OcvSocData readOcvSocCSV(const std::string& filename) {
+OcvSocData ReadOcvSocCSV(const std::string& filename) {
     std::ifstream file(filename);
     if (!file.is_open()) {
         throw std::runtime_error("Could not open file: " + filename);

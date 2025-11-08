@@ -1,4 +1,4 @@
-#include "interpolation/twoPointLinearInterpolator.h"
+#include "Interpolation/TwoPointLinearInterpolator.h"
 
 bool TwoPointLinearInterpolator::canPredict() {
     return updatedCount > 1;

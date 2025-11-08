@@ -1,6 +1,6 @@
 #pragma once
-#include "interpolation/interpolatorBase.h"
-#include "algorithms/recursiveLeastSquares.h"
+#include "Interpolation/InterpolatorBase.h"
+#include "Algorithms/RecursiveLeastSquares.h"
 #include <cmath>
 
 class PolyRSLInterpolator : public InterpolatorBase {

@@ -1,4 +1,4 @@
-#include "loading/processNasaCycles.h"
+#include "Loading/ProcessNasaCycles.h"
 
 
 Eigen::VectorXd toVector(matvar_t *var) {
@@ -13,7 +13,7 @@ Eigen::VectorXd toVector(matvar_t *var) {
 
 // Process NASA .mat file and dispatch to handler
 // https://data.nasa.gov/dataset/li-ion-battery-aging-datasets
-void processNasaCycles(const std::string &matFile, const std::string &varbleName, CycleHandler &handler) {
+void ProcessNasaCycles(const std::string &matFile, const std::string &varbleName, CycleHandler &handler) {
     mat_t *mat = Mat_Open(matFile.c_str(), MAT_ACC_RDONLY);
     if (!mat) {
         throw std::runtime_error("Cannot open MAT file: " + matFile);

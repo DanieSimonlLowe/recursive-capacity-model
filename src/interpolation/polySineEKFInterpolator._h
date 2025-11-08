@@ -1,6 +1,6 @@
 #pragma once
-#include "interpolation/interpolatorBase.h"
-#include "algorithms/extendedKalmanFilter.h"
+#include "Interpolation/InterpolatorBase.h"
+#include "Algorithms/ExtendedKalmanFilter.h"
 #include <cmath>
 
 class PolySineEKFInterpolator : public InterpolatorBase {

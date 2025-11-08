@@ -1,4 +1,4 @@
-#include "algorithms/splines/notKnotSpline.h"
+#include "Algorithms/splines/NotKnotSpline.h"
 
 NotKnotSpline::NotKnotSpline(const Eigen::VectorXd& t, const Eigen::VectorXd& y) {
     const int n = t.size();

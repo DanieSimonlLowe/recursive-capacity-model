@@ -1,4 +1,4 @@
-#include "algorithms/splines/MonotoneQuinticSpline.h"
+#include "Algorithms/splines/MonotoneQuinticSpline.h"
 // https://tchlux.github.io/papers/tchlux-2019-HPC-1.pdf
 
 constexpr double FLOAT_TOLERANCE = 1e-10;

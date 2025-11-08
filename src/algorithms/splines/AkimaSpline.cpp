@@ -1,4 +1,4 @@
-#include "algorithms/splines/AkimaSpline.h"
+#include "Algorithms/splines/AkimaSpline.h"
 #include <iostream>
 
 // I make the assumption that the input points are strictly monotone.

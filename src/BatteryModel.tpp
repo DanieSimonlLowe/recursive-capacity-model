@@ -31,7 +31,7 @@ BatteryModel<ECMStateEstimator,VoltageInterpolator,CurrentInterpolator,SocOcvCur
                                        ECMStateEstimator::getParamsCount() + 
                                        VoltageInterpolator::getParamsCount(), 
                                        CurrentInterpolator::getParamsCount())),
-    socOcvCurve(readOcvSocCSV("/mnt/c/Users/Danie/Desktop/project/data/soc_volt_nasa.csv"),
+    socOcvCurve(ReadOcvSocCSV("/mnt/c/Users/Danie/Desktop/project/data/soc_volt_nasa.csv"),
                 params.segment(SocEstimator::getParamsCount() + 
                               ECMStateEstimator::getParamsCount() + 
                               VoltageInterpolator::getParamsCount() + 

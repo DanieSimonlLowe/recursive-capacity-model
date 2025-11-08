@@ -1,6 +1,6 @@
 #pragma once
-#include "interpolation/interpolatorBase.h"
-#include "algorithms/splines/cubicSpline.h"
+#include "Interpolation/InterpolatorBase.h"
+#include "Algorithms/splines/CubicSpline.h"
 #include <vector> 
 #define  CUBIC_SPLINE_WINDOW_SIZE 50      
 

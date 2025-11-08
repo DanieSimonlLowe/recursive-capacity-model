@@ -2,8 +2,8 @@
 #include <Eigen/Dense>
 #include <cstddef>
 #include <cmath>
-#include "socOcv/SocOcvCurveBase.h"
-#include "algorithms/LeastSquares.h"
+#include "SocOcv/SocOcvCurveBase.h"
+#include "Algorithms/LeastSquares.h"
 
 // https://arxiv.org/pdf/2306.16542
 // Nernst model added paramters reduces to the model in the paper when power is 0.

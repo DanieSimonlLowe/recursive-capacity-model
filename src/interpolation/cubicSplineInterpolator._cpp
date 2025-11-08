@@ -1,5 +1,5 @@
 
-#include "interpolation/cubicSplineInterpolator.h"
+#include "Interpolation/CubicSplineInterpolator.h"
 
 
 CubicSplineInterpolator::CubicSplineInterpolator(double ts, unsigned int windowSize) :

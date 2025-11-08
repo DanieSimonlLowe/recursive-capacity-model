@@ -1,6 +1,6 @@
 #pragma once
 #include <Eigen/Dense>
-#include "loading/readOcvSocCSV.h"
+#include "Loading/ReadOcvSocCSV.h"
 
 
 class SocOcvCurveBase {

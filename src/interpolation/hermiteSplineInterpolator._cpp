@@ -1,4 +1,4 @@
-#include "interpolation/hermiteSplineInterpolator.h"
+#include "Interpolation/HermiteSplineInterpolator.h"
 
 HermiteSplineInterpolator::HermiteSplineInterpolator(double ts) : 
      InterpolatorBase(),

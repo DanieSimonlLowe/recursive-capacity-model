@@ -1,4 +1,4 @@
-#include "socOcv/ExpLsSocOcvCurve.h"
+#include "SocOcv/ExpLsSocOcvCurve.h"
 
 ExpLsSocOcvCurve::ExpLsSocOcvCurve(const OcvSocData &data, const Eigen::VectorXd& params) {
     power = static_cast<int>(params(0));

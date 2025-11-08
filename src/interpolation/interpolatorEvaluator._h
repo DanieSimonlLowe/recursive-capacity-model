@@ -1,6 +1,6 @@
 #pragma once
-#include "interpolation/interpolatorBase.h"
-#include "loading/processNasaCycles.h"
+#include "Interpolation/InterpolatorBase.h"
+#include "Loading/ProcessNasaCycles.h"
 #include <iostream>
 
 class InterpolatorEvaluator: public CycleHandler {

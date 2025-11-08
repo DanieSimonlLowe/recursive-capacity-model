@@ -28,4 +28,4 @@ class CycleHandler {
 
 };
 
-void processNasaCycles(const std::string &matFile, const std::string &varbleName, CycleHandler &handler);
+void ProcessNasaCycles(const std::string &matFile, const std::string &varbleName, CycleHandler &handler);

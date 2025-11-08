@@ -3,7 +3,7 @@
 #include <cmath>
 #include <vector>
 #include <stack>
-#include "algorithms/splines/PolynomialSpline.h"
+#include "Algorithms/splines/PolynomialSpline.h"
 
 
 

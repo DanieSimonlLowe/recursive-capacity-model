@@ -1,5 +1,5 @@
 #pragma once
-#include "interpolation/interpolatorBase.h"
+#include "Interpolation/InterpolatorBase.h"
 
 class TwoPointLinearInterpolator : public InterpolatorBase {
     public:

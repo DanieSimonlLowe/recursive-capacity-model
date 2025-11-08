@@ -1,4 +1,4 @@
-#include "algorithms/extendedKalmanFilter.h"
+#include "Algorithms/ExtendedKalmanFilter.h"
 
 ExtendedKalmanFilter::ExtendedKalmanFilter(
     const Eigen::MatrixXd &processNoise, 

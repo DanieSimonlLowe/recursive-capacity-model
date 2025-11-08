@@ -5,8 +5,8 @@
 #include <stdexcept>
 #include <cmath>
 
-#include "loading/processNasaCycles.h"
-#include "optimization/HyperparameterOptimizable.h"
+#include "Loading/ProcessNasaCycles.h"
+#include "Optimization/HyperparameterOptimizable.h"
 
 
 Eigen::VectorXd bayesianOptimize(

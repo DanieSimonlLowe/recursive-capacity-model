@@ -12,4 +12,4 @@ struct OcvSocData {
     Eigen::VectorXd ocv;
 };
 
-OcvSocData readOcvSocCSV(const std::string& filename);
+OcvSocData ReadOcvSocCSV(const std::string& filename);

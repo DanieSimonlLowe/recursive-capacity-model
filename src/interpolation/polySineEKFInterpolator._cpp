@@ -1,4 +1,4 @@
-#include "interpolation/polySineEKFInterpolator.h"
+#include "Interpolation/PolySineEKFInterpolator.h"
 
 PolySineEKFInterpolator::PolySineEKFInterpolator(double ts, unsigned int polyDegree, double updateNoise, 
                         double measurementNoise, double initialError, double resetSeccoundsEquivalent) 

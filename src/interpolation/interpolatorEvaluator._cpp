@@ -1,4 +1,4 @@
-#include "interpolation/interpolatorEvaluator.h"
+#include "Interpolation/InterpolatorEvaluator.h"
 
 void InterpolatorEvaluator::onImpedance(double Rct, double Re) {
     // Should do nothing
@@ -100,7 +100,7 @@ double InterpolatorEvaluator::getTemperatureMSE() {
 
 void InterpolatorEvaluator::printResults() {
     std::cout << "evaluate " << typeid(voltageInterpolator).name() << " \n";
-    processNasaCycles("/mnt/c/Users/Danie/Desktop/project/data/B0007.mat","B0007",*this);
+    ProcessNasaCycles("/mnt/c/Users/Danie/Desktop/project/data/B0007.mat","B0007",*this);
 
     std::cout << "Current \tMSE " << getCurrentMSE() 
             << "\t 1-R^2 " << (getCurrentMSE() / (totalCurrentVariance / (predictionCount-1))) 

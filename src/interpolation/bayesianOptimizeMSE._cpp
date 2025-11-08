@@ -1,4 +1,4 @@
-#include "interpolation/bayesianOptimizeMSE.h"
+#include "Interpolation/BayesianOptimizeMSE.h"
 
 class MSEOptimizer : public bayesopt::ContinuousModel {
 private:
@@ -73,7 +73,7 @@ public:
         
         InterpolatorEvaluator evaluator(interp);
 
-        processNasaCycles("/mnt/c/Users/Danie/Desktop/project/data/B0006.mat", "B0006", evaluator);
+        ProcessNasaCycles("/mnt/c/Users/Danie/Desktop/project/data/B0006.mat", "B0006", evaluator);
         
         double mse = 0.0;
         switch (type) {
@@ -120,7 +120,7 @@ public:
 
 
 // Main function with configurable bounds
-Eigen::VectorXd bayesianOptimizeMSE(
+Eigen::VectorXd BayesianOptimizeMSE(
     InterpolatorBase& interpolator,
     MSEType mseType,
     const Eigen::VectorXd& lowerBounds,
@@ -137,7 +137,7 @@ Eigen::VectorXd bayesianOptimizeMSE(
     
     //gridTest(optimizer,lowerBounds, upperBounds);
         
-    // Run optimization
+    // Run Optimization
     vectord bestParams(dim);
     optimizer.optimize(bestParams);
     

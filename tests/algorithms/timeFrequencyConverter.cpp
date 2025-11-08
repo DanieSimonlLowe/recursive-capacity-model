@@ -3,7 +3,7 @@
 #include <complex>
 #include <cmath>
 #include <algorithm>
-#include "algorithms/timeFrequencyConverter.h"
+#include "Algorithms/TimeFrequencyConverter.h"
 
 class TimeFrequencyConverterTest : public ::testing::Test {
 protected:
@@ -93,7 +93,7 @@ TEST_F(TimeFrequencyConverterTest, FrequencyArray) {
 
 
 
-// Test frequency limitation in interpolation
+// Test frequency limitation in Interpolation
 TEST_F(TimeFrequencyConverterTest, FrequencyLimitedInterpolation) {
     auto data = generateSineWave(1.0, 1.0, 64);
     
@@ -116,7 +116,7 @@ TEST_F(TimeFrequencyConverterTest, EdgeCases) {
     auto data = generateSineWave(1.0, 1.0, 32);
     TimeFrequencyConverter converter(data.first, data.second, 64);
     
-    // Test interpolation at time boundaries
+    // Test Interpolation at time boundaries
     std::complex<double> result_start = converter.getValueAtTime(data.first.front(), 0);
     std::complex<double> result_end = converter.getValueAtTime(data.first.back(), 0);
     
@@ -153,7 +153,7 @@ TEST_F(TimeFrequencyConverterTest, TwoSamples) {
     
     TimeFrequencyConverter converter(times, values, 8);
     
-    // Test interpolation
+    // Test Interpolation
     std::complex<double> mid_result = converter.getValueAtTime(0.5, 0);
     EXPECT_TRUE(std::abs(mid_result) > 0); // Should have some interpolated value
 }
@@ -182,7 +182,7 @@ TEST_F(TimeFrequencyConverterTest, LargeDataset) {
     ASSERT_NO_THROW({
         TimeFrequencyConverter converter(data.first, data.second, 2048);
         
-        // Test multiple interpolations
+        // Test multiple Interpolations
         for (int i = 0; i < 100; i++) {
             double test_time = 0.01 * i;
             std::complex<double> result = converter.getValueAtTime(test_time, 50);

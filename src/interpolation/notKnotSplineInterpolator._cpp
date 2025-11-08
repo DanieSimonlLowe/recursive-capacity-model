@@ -1,6 +1,6 @@
 
-#include "interpolation/NotKnotSplineInterpolator.h"
-#include "algorithms/splines/notKnotSpline.h"
+#include "Interpolation/NotKnotSplineInterpolator.h"
+#include "Algorithms/splines/NotKnotSpline.h"
 
 NotKnotSplineInterpolator::NotKnotSplineInterpolator(double ts, unsigned int windowSize) :
      InterpolatorBase(),

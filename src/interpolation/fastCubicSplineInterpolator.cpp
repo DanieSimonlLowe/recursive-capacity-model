@@ -1,4 +1,4 @@
-#include "interpolation/fastCubicSplineInterpolator.h"
+#include "Interpolation/FastCubicSplineInterpolator.h"
 
 FastCubicSplineInterpolator::FastCubicSplineInterpolator(Eigen::VectorXd params): InterpolatorBase() {
     position = 0;

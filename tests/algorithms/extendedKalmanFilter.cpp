@@ -5,7 +5,7 @@
 #include <Eigen/Dense>
 #include <stdexcept>
 
-#include "algorithms/extendedKalmanFilter.h" // adjust include path if needed
+#include "Algorithms/ExtendedKalmanFilter.h" // adjust include path if needed
 
 // Concrete EKF for tests: linear prediction x' = A x + b, measurement z = H x.
 // Jacobians are constant A and H.

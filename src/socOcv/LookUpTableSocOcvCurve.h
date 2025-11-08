@@ -1,6 +1,6 @@
 #pragma once
 #include <cstddef>
-#include "socOcv/SocOcvCurveBase.h"
+#include "SocOcv/SocOcvCurveBase.h"
 
 class LookUpTableSocOcvCurve: public SocOcvCurveBase {
     public:

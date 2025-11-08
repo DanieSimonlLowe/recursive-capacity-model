@@ -1,4 +1,4 @@
-#include "algorithms/recursiveLeastSquares.h"
+#include "Algorithms/RecursiveLeastSquares.h"
 
 RecursiveLeastSquares::RecursiveLeastSquares(size_t dimension, double forgettingFactor, double initialCovariance) {
     if (dimension <= 0) {

@@ -1,4 +1,4 @@
-#include "socOcv/LookUpTableSocOcvCurve.h"
+#include "SocOcv/LookUpTableSocOcvCurve.h"
 
 LookUpTableSocOcvCurve::LookUpTableSocOcvCurve(const OcvSocData &data, const Eigen::VectorXd& params) {
     socs = data.soc;

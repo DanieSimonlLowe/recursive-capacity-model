@@ -1,4 +1,4 @@
-#include "algorithms/splines/FritschCarlsonSpline.h"
+#include "Algorithms/splines/FritschCarlsonSpline.h"
 #include <iostream>
 
 // I make the assumption that the input points are strictly monotone.

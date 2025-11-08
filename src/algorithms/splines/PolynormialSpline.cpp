@@ -1,4 +1,4 @@
-#include "algorithms/splines/PolynomialSpline.h"
+#include "Algorithms/splines/PolynomialSpline.h"
 
 inline double derivativeCoefficient(const int power, const int degree) {
     if (degree > power) return 0.0;
@@ -27,7 +27,7 @@ PolynomialSpline::PolynomialSpline(const Eigen::VectorXd& xs, const Eigen::Vecto
     int paramsPerSegment = power + 1;
     int paramCount = numSegments * paramsPerSegment;
     
-    // Each segment: 2 interpolation constraints (start, end)
+    // Each segment: 2 Interpolation constraints (start, end)
     // Each interior knot: (power-1) continuity constraints for derivatives
     // 2 boundary conditions (natural spline: derivative = 0 at ends)
     int continuity = power - 1;
@@ -38,7 +38,7 @@ PolynomialSpline::PolynomialSpline(const Eigen::VectorXd& xs, const Eigen::Vecto
 
     int currentEq = 0;
     
-    // For each segment i, set up interpolation constraints
+    // For each segment i, set up Interpolation constraints
     for (int i = 0; i < numSegments; ++i) {
         int paramOffset = i * paramsPerSegment;
         double h = xs(i+1) - xs(i);
