@@ -3,10 +3,15 @@
 #include "Interpolation/InterpolatorBase.h"
 #include "Loading/ReadOcvSocCSV.h"
 
+enum ErrorMetric {
+    VoltageError,
+    CapacityError
+};
+
 template<typename  ECMStateEstimator, typename  VoltageInterpolator, typename  CurrentInterpolator, typename  SocOcvCurve, typename  SocEstimator, typename  CapacityEstimator>
 class BatteryModel: public CycleHandler {
     public:
-        BatteryModel(double capacity, Eigen::VectorXd& params);
+        BatteryModel(double capacity, Eigen::VectorXd& params, bool useMeasuredCapacity=false);
 
         static size_t getParamsCount();
         
@@ -26,8 +31,11 @@ class BatteryModel: public CycleHandler {
                                 const double &capacity);
 
         void onImpedance(double Rct, double Re);
+
+        double getObjectiveValue(ErrorMetric metric) const;
     
     private:
+        const bool useMeasuredCapacity;
         const double deltaTimeMult;
         const double capacityConfidenceThreshold;
         double deltaTime;

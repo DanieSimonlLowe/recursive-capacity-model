@@ -24,3 +24,5 @@ https://www.mdpi.com/1996-1073/14/4/1054
 // TODO OCVEKFEstimator that uses EKF with other stuff
 // This reqires a good soc ocv model.
 // So do the soc ocv model evaluation first. 
+
+use gdb to break point stuff

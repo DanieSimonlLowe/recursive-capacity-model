@@ -3,7 +3,7 @@
 EkfSocEstimator::EkfSocEstimator(const int dimension, const double maxValtSq, SocOcvCurveBase* SocOcvCurve, const Eigen::VectorXd& params): 
     dimension(dimension), SocOcvCurve(SocOcvCurve) {
     
-    const int n = dimension + 1;
+    const int n = dimension + 1;  // State size: SOC + dimension RC voltages
     Eigen::VectorXd state = Eigen::VectorXd::Zero(n);
 
     const double initialSocVariance = std::pow(10, params(0));
@@ -17,7 +17,6 @@ EkfSocEstimator::EkfSocEstimator(const int dimension, const double maxValtSq, So
     Eigen::MatrixXd processNoise = processValtNoise * Eigen::MatrixXd::Identity(n, n);
     processNoise(0, 0) = processSocNoise;
 
-    // Fixed: create a 1x1 matrix properly
     Eigen::MatrixXd measurementNoise(1, 1);
     measurementNoise(0, 0) = std::pow(10, params(4)) * maxValtSq;
 
@@ -52,7 +51,6 @@ void EkfSocEstimator::measure(const double current, const double voltage) {
     double reactanceVolt = voltage - current * ohmicResistance;
 
     Eigen::VectorXd measurement(1);
-
     measurement(0) = reactanceVolt;
 
     ekf->measure(measurement);
@@ -63,7 +61,7 @@ double EkfSocEstimator::predictVoltage(const double current, const double deltaT
     ekf->predict();
 
     Eigen::VectorXd state = ekf->getState();
-    double predVolt =  current * ohmicResistance + SocOcvCurve->getOcv(state(0));
+    double predVolt = current * ohmicResistance + SocOcvCurve->getOcv(state(0));
     for (int i = 1; i <= dimension; i++) { 
         predVolt -= state(i);
     }
@@ -81,7 +79,8 @@ EkfSocEstimator::HelperEKF::HelperEKF(const Eigen::MatrixXd &processNoise, const
                         ) 
                         : ExtendedKalmanFilter(processNoise, measurementNoise, initialState, initialCovariance), 
                         dimension(dimension), SocOcvCurve(SocOcvCurve), parent(parent) {
-    measurementVector = -1 * Eigen::VectorXd::Ones(dimension); 
+    // Fixed: measurementVector size should be dimension + 1 (state size)
+    measurementVector = -1 * Eigen::VectorXd::Ones(dimension + 1); 
     measurementVector(0) = 0;
 }
 
@@ -97,11 +96,8 @@ Eigen::VectorXd EkfSocEstimator::HelperEKF::measurementFunction(const Eigen::Vec
 }
 
 Eigen::MatrixXd EkfSocEstimator::HelperEKF::measurementJacobian(const Eigen::VectorXd &state) {
-    Eigen::MatrixXd out(1, dimension + 1);
-    out = measurementVector.transpose();
-
+    Eigen::MatrixXd out = -1 * Eigen::MatrixXd::Ones(1,dimension + 1);
     out(0, 0) = SocOcvCurve->getOcvSocDerivative(state(0));
-
     return out;
 }
 

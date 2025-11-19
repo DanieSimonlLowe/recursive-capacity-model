@@ -22,9 +22,9 @@ RecursiveLeastSquares::RecursiveLeastSquares(size_t dimension, double forgetting
 void RecursiveLeastSquares::update(Eigen::VectorXd x, double y) {
     double spread = x.transpose() * covariance * x;
     
-    if (forgettingFactor + spread == 0) {
-        return;
-    }
+    // if (forgettingFactor + spread == 0) {
+    //     return;
+    // }
 
     Eigen::VectorXd gain = covariance * x / (forgettingFactor + spread);
     
@@ -63,16 +63,16 @@ size_t RecursiveLeastSquares::getParamsCount() {
 
 Eigen::VectorXd RecursiveLeastSquares::getLowerBounds() {
     Eigen::VectorXd lower(2);
-    lower[1] = 2;
-    lower[2] = 1;
+    lower[0] = 2;
+    lower[1] = 1;
     
     return lower;
 }
 
 Eigen::VectorXd RecursiveLeastSquares::getUpperBounds() {
-    Eigen::VectorXd lower(2);
-    lower[1] = 1000;
-    lower[2] = 15;
+    Eigen::VectorXd upper(2);
+    upper[0] = 1000;
+    upper[1] = 15;
     
     return lower;
 }
