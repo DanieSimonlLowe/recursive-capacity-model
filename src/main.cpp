@@ -15,7 +15,7 @@ int main(int argc, char **argv) {
     FastCubicSplineInterpolator,FastCubicSplineInterpolator,
     SplineOcvSoc<AkimaSpline>,EkfSocEstimator,
     RlsCapacityEstimator<RecursiveLeastSquares>>
-    >(2.1,ErrorMetric::VoltageError);
+    >(2.1,ErrorMetric::ResistanceError);
     
 }
 

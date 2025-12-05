@@ -21,6 +21,8 @@ class SocEstimator {
 
         virtual void measure(const double current, const double voltage) = 0;
 
+        virtual void setup(const double current, const double voltage) = 0;
+
         protected:
             double ohmicResistance;
             std::vector<double> branchResistances;

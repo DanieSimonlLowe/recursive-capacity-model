@@ -26,9 +26,10 @@ ExtendedKalmanFilter::ExtendedKalmanFilter(
 }
 
 void ExtendedKalmanFilter::predict() {
-    x_ = predictionFunction(x_);
-    Eigen::MatrixXd jacobian = predictionJacobian(x_);
+    Eigen::MatrixXd jacobian = predictionJacobian(x_);  // Evaluate at current state
+    x_ = predictionFunction(x_);  // Then update state
     P_ = jacobian * P_ * jacobian.transpose() + Q_;
+    clampState();
 }
 
 void ExtendedKalmanFilter::measure(const Eigen::VectorXd &measurement) {
@@ -41,12 +42,17 @@ void ExtendedKalmanFilter::measure(const Eigen::VectorXd &measurement) {
     const Eigen::MatrixXd I = Eigen::MatrixXd::Identity(P_.rows(), P_.cols());
     const Eigen::MatrixXd temp = (I - k_ * H_);
     P_ = temp * P_ * temp.transpose() + k_ * R_ * k_.transpose();
+    clampState();
 }
 
-const Eigen::VectorXd ExtendedKalmanFilter::getState() {
+const Eigen::VectorXd& ExtendedKalmanFilter::getState() {
     return x_;
 }
 
-const Eigen::MatrixXd ExtendedKalmanFilter::getCovariance() {
+const Eigen::MatrixXd& ExtendedKalmanFilter::getCovariance() {
     return P_;
+}
+
+void ExtendedKalmanFilter::setState(const Eigen::VectorXd &state) {
+    x_ = state;
 }

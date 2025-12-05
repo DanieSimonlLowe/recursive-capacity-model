@@ -50,7 +50,7 @@ public:
         double objective = 1e100;
         try {
             // Create battery model with current parameters
-            BatteryModel model(capacity, eigenParams, metric == ErrorMetric::VoltageError);
+            BatteryModel model(capacity, eigenParams, metric != ErrorMetric::CapacityError);
         
             // Process NASA cycles data
             ProcessNasaCycles("/mnt/c/Users/Danie/Desktop/project/data/B0006.mat", "B0006", model);
@@ -106,6 +106,8 @@ Eigen::VectorXd BayesianOptimize(double capacity, ErrorMetric metric)
     // Create final model with optimized parameters and display results
     BatteryModel finalModel(capacity, result);
     std::cout << "Final model created with optimized parameters" << std::endl;
+    ProcessNasaCycles("/mnt/c/Users/Danie/Desktop/project/data/B0007.mat", "B0007", finalModel);
+    finalModel.display(metric);
     
     return result;
 }

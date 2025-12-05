@@ -9,13 +9,15 @@
 // https://www.mdpi.com/2313-0105/9/12/583
 class EkfSocEstimator : public SocEstimator {
     public:
-        EkfSocEstimator(const int dimension, const double maxValtSq, SocOcvCurveBase* SocOcvCurve, const Eigen::VectorXd& params);
+        EkfSocEstimator(const int dimension, SocOcvCurveBase* SocOcvCurve, const Eigen::VectorXd& params);
     
 
         double predictVoltage(const double current, const double deltaTime) override;
 
         void measure(const double current, const double voltage) override;
         double getSoc() override;
+
+        void setup(const double current, const double voltage) override;
 
         
         static size_t getParamsCount();
@@ -37,6 +39,7 @@ class EkfSocEstimator : public SocEstimator {
                 Eigen::MatrixXd predictionJacobian(const Eigen::VectorXd &state) override;
                 Eigen::VectorXd measurementFunction(const Eigen::VectorXd &state) override;
                 Eigen::MatrixXd measurementJacobian(const Eigen::VectorXd &state) override;
+                void clampState() override;
                 
                 void setUpdateState(const double dt, const double c);
                 double deltaTime;

@@ -3,7 +3,6 @@
 template<typename  ECMStateEstimator, typename  VoltageInterpolator, typename  CurrentInterpolator, typename  SocOcvCurve, typename  SocEstimator, typename  CapacityEstimator>
 BatteryModel<ECMStateEstimator,VoltageInterpolator,CurrentInterpolator,SocOcvCurve,SocEstimator,CapacityEstimator>::
     BatteryModel(double capacity, Eigen::VectorXd& params, bool useMeasuredCapacity): 
-    capacity(capacity),
     useMeasuredCapacity(useMeasuredCapacity),
     deltaTimeMult(std::pow(10, params[SocEstimator::getParamsCount() + 
                                     ECMStateEstimator::getParamsCount() + 
@@ -18,6 +17,7 @@ BatteryModel<ECMStateEstimator,VoltageInterpolator,CurrentInterpolator,SocOcvCur
                                        SocOcvCurve::getParamsCount() +
                                        CapacityEstimator::getParamsCount() + 1]),
     deltaTime(0),
+    socEstimatorSetup(false),
     totalVoltageErrorSq(0),
     voltagePredictionCount(0),
     totalCapacityErrorSq(0),
@@ -41,9 +41,10 @@ BatteryModel<ECMStateEstimator,VoltageInterpolator,CurrentInterpolator,SocOcvCur
                                      CurrentInterpolator::getParamsCount() +
                                      SocOcvCurve::getParamsCount(), 
                                      CapacityEstimator::getParamsCount())),
-    socEstimatorParams(params.segment(0, SocEstimator::getParamsCount()))
+    socEstimator(ECMStateEstimator::getDimension(),&socOcvCurve,params.segment(0, SocEstimator::getParamsCount()))
 {
     // Constructor body is now empty - all initialization done in initializer list
+    socEstimator.setCapacity(capacity);
 }
 
 template<typename  ECMStateEstimator, typename  VoltageInterpolator, typename  CurrentInterpolator, typename  SocOcvCurve, typename  SocEstimator, typename  CapacityEstimator>
@@ -168,19 +169,10 @@ void BatteryModel<ECMStateEstimator,VoltageInterpolator,CurrentInterpolator,SocO
         ecmStateEstimator.setDeltaTime(deltaTime);
     }
 
-    
-    const double maxVolt = voltages.maxCoeff();
-    const double minVolt = voltages.minCoeff();
-    const double maxVoltSq = std::max(maxVolt * maxVolt, minVolt * minVolt);
-
-    SocEstimator socEstimator(ECMStateEstimator::getDimension(),maxVoltSq,&socOcvCurve,socEstimatorParams);
-    socEstimator.setCapacity(capacity);
 
     int n = voltages.size();  // assumes all vectors have the same length
     double startTime = times[0];
     
-    bool socEstimatorValuesSet = false;
-    int socEstimatorMeasureCount = 0;
     for (int i = 0; i  < n; i++) {
         double voltage = voltages[i];
         double current = currents[i];
@@ -188,42 +180,50 @@ void BatteryModel<ECMStateEstimator,VoltageInterpolator,CurrentInterpolator,SocO
 
         currentInterpolator.update(current,time);
         voltageInterpolator.update(voltage,time);
-        if (i % 5 == 4) {
-            if (currentInterpolator.canPredict() && voltageInterpolator.canPredict()) {
-                int steps = static_cast<int>((time - startTime) / deltaTime) + 1;
-                Eigen::VectorXd voltageSamples(steps);
-                Eigen::VectorXd currentSamples(steps);
-                for (int j = 0; j < steps; ++j) {
-                    double t = startTime + j * deltaTime;
-                    // work with t
-                    voltageSamples[j] = voltageInterpolator.predict(t);
-                    currentSamples[j] = currentInterpolator.predict(t);
-                }
-                startTime = time;
-
-                ecmStateEstimator.update(currentSamples,voltageSamples);
+        if (currentInterpolator.canPredict() && voltageInterpolator.canPredict()) {
+            int steps = static_cast<int>((time - startTime) / deltaTime) + 1;
+            Eigen::VectorXd voltageSamples(steps);
+            Eigen::VectorXd currentSamples(steps);
+            for (int j = 0; j < steps; ++j) {
+                double t = startTime + j * deltaTime;
+                // work with t
+                voltageSamples[j] = voltageInterpolator.predict(t);
+                currentSamples[j] = currentInterpolator.predict(t);
             }
+            startTime = time;
 
-            if (ecmStateEstimator.canCalculateState()) {
-                socEstimator.setOhmicResistance(ecmStateEstimator.getOhmicResistance());
-                socEstimator.setBranchResistances(ecmStateEstimator.getBranchResistances());
-                socEstimator.setBranchCapacities(ecmStateEstimator.getBranchCapacities());
-                socEstimatorValuesSet = true;
-            }
+            ecmStateEstimator.update(currentSamples,voltageSamples);
         }
-        if (socEstimatorValuesSet && i > 0) {
+
+    }
+    
+    if (ecmStateEstimator.canCalculateState()) {
+        socEstimator.setOhmicResistance(ecmStateEstimator.getOhmicResistance());
+        socEstimator.setBranchResistances(ecmStateEstimator.getBranchResistances());
+        socEstimator.setBranchCapacities(ecmStateEstimator.getBranchCapacities());
+        socEstimatorSetup = true;
+    }
+
+    if (socEstimatorSetup) {
+    
+        for (int i = 1; i  < n; i++) {
+            double voltage = voltages[i];
+            double current = currents[i];
             const double startSoc = socEstimator.getSoc();
-            const double diffTime = time - times[i-1];
-            if (socEstimatorMeasureCount > 10) {
+            const double diffTime = times[i] - times[i-1];
+            if (i > 10) { // ignore first 10
                 const double predVoltage = socEstimator.predictVoltage(current,diffTime);
                 const double error = voltage - predVoltage;
-                totalVoltageErrorSq += error * error;
                 voltagePredictionCount++;
+                const double deltaVoltage = voltage - meanVoltage;
+                meanVoltage += deltaVoltage / voltagePredictionCount;
+                totalVoltageVariance += deltaVoltage * (voltage - meanVoltage);
+                totalVoltageErrorSq += error * error;
             } else {
                 socEstimator.predictVoltage(current,diffTime);
             }
             socEstimator.measure(current,voltage);
-            socEstimatorMeasureCount++;
+            
             if (!useMeasuredCapacity) {
                 const double endSoc = socEstimator.getSoc();
 
@@ -233,7 +233,7 @@ void BatteryModel<ECMStateEstimator,VoltageInterpolator,CurrentInterpolator,SocO
                 }
             }
         }
-        
+
     }
 }
 
@@ -256,17 +256,29 @@ void BatteryModel<ECMStateEstimator,VoltageInterpolator,CurrentInterpolator,SocO
     processData(voltage,current,time);
     if (!useMeasuredCapacity) {
         const double capError = capacityEstimator.getCapacity() - capacity;
+        const double deltaCapacity = capacityEstimator.getCapacity() - meanCapacity;
         totalCapacityErrorSq += capError*capError;
         capacityPredictionCount++;
+        meanCapacity += deltaCapacity / capacityPredictionCount;
+        totalCapacityVariance += deltaCapacity * (capacityEstimator.getCapacity() - meanCapacity);
     } else {
-        this->capacity = capacity;
+        socEstimator.setCapacity(capacity);
     }
 };
 
 template<typename  ECMStateEstimator, typename  VoltageInterpolator, typename  CurrentInterpolator, typename  SocOcvCurve, typename  SocEstimator, typename  CapacityEstimator>
 void BatteryModel<ECMStateEstimator,VoltageInterpolator,CurrentInterpolator,SocOcvCurve,SocEstimator,CapacityEstimator>::
     onImpedance(double Rct, double Re) {
-    // this is not used.
+    if (ecmStateEstimator.canCalculateState()) {
+        const double measured = ecmStateEstimator.getOhmicResistance();
+        const double error = measured - Re;
+        const double delta = measured - meanResistance;
+        totalResistanceErrorSq = error*error;
+        resistancePredictionCount++;
+        meanResistance += delta / resistancePredictionCount;
+        totalResistanceVariance += delta * (measured - meanResistance);
+    }
+    
 }
 
 
@@ -274,6 +286,12 @@ template<typename  ECMStateEstimator, typename  VoltageInterpolator, typename  C
 double BatteryModel<ECMStateEstimator,VoltageInterpolator,CurrentInterpolator,SocOcvCurve,SocEstimator,CapacityEstimator>::
     getObjectiveValue(ErrorMetric metric) const {
     switch (metric) {
+        case ErrorMetric::ResistanceError:
+            if (resistancePredictionCount > 0) {
+                return totalResistanceErrorSq / resistancePredictionCount;
+            } else {
+                return 1e100;
+            }
         case ErrorMetric::VoltageError:
             if (voltagePredictionCount > 0) {
                 return totalVoltageErrorSq / voltagePredictionCount;
@@ -288,5 +306,28 @@ double BatteryModel<ECMStateEstimator,VoltageInterpolator,CurrentInterpolator,So
                 return 1e100;
             }
         
+    }
+}
+
+template<typename  ECMStateEstimator, typename  VoltageInterpolator, typename  CurrentInterpolator, typename  SocOcvCurve, typename  SocEstimator, typename  CapacityEstimator>
+void BatteryModel<ECMStateEstimator,VoltageInterpolator,CurrentInterpolator,SocOcvCurve,SocEstimator,CapacityEstimator>::
+    display(ErrorMetric metric) const {
+    switch (metric) {
+        case ErrorMetric::ResistanceError:
+            std::cout << "Resistance \tMSE " << getObjectiveValue(metric) << "\n"
+                << "\t 1-R^2 " << (totalResistanceErrorSq / resistancePredictionCount) / (totalResistanceVariance / (resistancePredictionCount-1)) << "\n"
+                << "\t total count " << resistancePredictionCount;
+            break;
+        case ErrorMetric::VoltageError:
+            std::cout << "Voltage \tMSE " << getObjectiveValue(metric) << "\n"
+                << "\t 1-R^2 " << (totalVoltageErrorSq / voltagePredictionCount) / (totalVoltageVariance / (voltagePredictionCount-1)) << "\n"
+                << "\t total count " << voltagePredictionCount;
+            break;
+        case ErrorMetric::CapacityError:
+        default:
+            std::cout << "Capacity \tMSE " << getObjectiveValue(metric) << "\n"
+                << "\t 1-R^2 " << (totalCapacityErrorSq / capacityPredictionCount) / (totalCapacityVariance / (capacityPredictionCount-1)) << "\n"
+                << "\t total count " << capacityPredictionCount;
+            break;
     }
 }

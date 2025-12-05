@@ -1,5 +1,6 @@
 #pragma once
 #include <Eigen/Dense>
+#include <stdexcept>
 
 // https://www.mathworks.com/help/driving/ug/extended-kalman-filters.html
 class  ExtendedKalmanFilter {
@@ -11,8 +12,9 @@ class  ExtendedKalmanFilter {
 
         virtual void predict();
         virtual void measure(const Eigen::VectorXd &measurement);
-        const Eigen::VectorXd getState();
-        const Eigen::MatrixXd getCovariance();
+        const Eigen::VectorXd& getState();
+        const Eigen::MatrixXd& getCovariance();
+        void setState(const Eigen::VectorXd &state);
 
     protected:
         virtual Eigen::VectorXd predictionFunction(const Eigen::VectorXd &state) = 0;
@@ -20,6 +22,7 @@ class  ExtendedKalmanFilter {
 
         virtual Eigen::VectorXd measurementFunction(const Eigen::VectorXd &state) = 0;
         virtual Eigen::MatrixXd measurementJacobian(const Eigen::VectorXd &state) = 0;
+        virtual void clampState() {}
 
 
         const Eigen::MatrixXd Q_; // process noise covariance

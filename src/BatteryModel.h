@@ -5,7 +5,8 @@
 
 enum ErrorMetric {
     VoltageError,
-    CapacityError
+    CapacityError,
+    ResistanceError
 };
 
 template<typename  ECMStateEstimator, typename  VoltageInterpolator, typename  CurrentInterpolator, typename  SocOcvCurve, typename  SocEstimator, typename  CapacityEstimator>
@@ -33,19 +34,31 @@ class BatteryModel: public CycleHandler {
         void onImpedance(double Rct, double Re);
 
         double getObjectiveValue(ErrorMetric metric) const;
+
+        void display(ErrorMetric metric) const;
     
     private:
         const bool useMeasuredCapacity;
         const double deltaTimeMult;
         const double capacityConfidenceThreshold;
         double deltaTime;
-        double capacity;
+
+        bool socEstimatorSetup;
 
         double totalVoltageErrorSq;
         int voltagePredictionCount;
+        double meanVoltage;
+        double totalVoltageVariance;
         
         double totalCapacityErrorSq;
         int capacityPredictionCount;
+        double meanCapacity;
+        double totalCapacityVariance;
+
+        double totalResistanceErrorSq;
+        int resistancePredictionCount;
+        double meanResistance;
+        double totalResistanceVariance;
 
         void processData(const Eigen::VectorXd &voltage,
                         const Eigen::VectorXd &current,
@@ -56,7 +69,7 @@ class BatteryModel: public CycleHandler {
         CurrentInterpolator currentInterpolator;
         SocOcvCurve socOcvCurve;
         CapacityEstimator capacityEstimator;
-        Eigen::VectorXd socEstimatorParams;
+        SocEstimator socEstimator;
 };
 
 #include "BatteryModel.tpp"

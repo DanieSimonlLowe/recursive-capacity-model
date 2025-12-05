@@ -9,6 +9,7 @@ class SplineOcvSoc: public SocOcvCurveBase {
 
         double getOcv(double soc) override;
         double getOcvSocDerivative(double soc) override;
+        double getSoc(double ocv) override;
 
         static size_t getParamsCount() { return 0; };
         static const Eigen::VectorXd getLowerBounds() { return Eigen::VectorXd(); };
@@ -16,6 +17,7 @@ class SplineOcvSoc: public SocOcvCurveBase {
     
     private:
         T *spline;
+        T *invSpline;
 };
 
 #include "SocOcv/SplineOcvSoc.tpp"

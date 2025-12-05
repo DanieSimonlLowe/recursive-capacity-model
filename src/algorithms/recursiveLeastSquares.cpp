@@ -74,5 +74,5 @@ Eigen::VectorXd RecursiveLeastSquares::getUpperBounds() {
     upper[0] = 1000;
     upper[1] = 15;
     
-    return lower;
+    return upper;
 }
