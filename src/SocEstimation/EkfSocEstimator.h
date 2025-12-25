@@ -16,8 +16,7 @@ class EkfSocEstimator : public SocEstimator {
 
         void measure(const double current, const double voltage) override;
         double getSoc() override;
-
-        void setup(const double current, const double voltage) override;
+        void setOcv(const double ocv) override;
 
         
         static size_t getParamsCount();

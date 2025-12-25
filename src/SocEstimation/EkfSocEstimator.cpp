@@ -68,20 +68,11 @@ double EkfSocEstimator::predictVoltage(const double current, const double deltaT
     return predVolt;
 }
 
-void EkfSocEstimator::setup(const double current, const double voltage) {
-    double ocv = voltage + ohmicResistance * current;
-    for (size_t i = 0; i < branchResistances.size(); ++i) {
-        double resistance = branchResistances[i];
-        // assume it starts with zero branch voltages
-        ocv += resistance * current;
-    }
-    Eigen::VectorXd state = Eigen::VectorXd::Zero(dimension+1);
+
+
+void EkfSocEstimator::setOcv(const double ocv) {
+    Eigen::VectorXd state = ekf->getState();
     state(0) = SocOcvCurve->getSoc(ocv);
-    if (state(0) > 1) {
-        state(0) = 1;
-    } else if (state(0) < 0) {
-        state(0) = 0;
-    }
     ekf->setState(state);
 }
 

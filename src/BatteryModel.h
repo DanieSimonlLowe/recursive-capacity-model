@@ -9,7 +9,7 @@ enum ErrorMetric {
     ResistanceError
 };
 
-template<typename  ECMStateEstimator, typename  VoltageInterpolator, typename  CurrentInterpolator, typename  SocOcvCurve, typename  SocEstimator, typename  CapacityEstimator>
+template<typename  ECMStateEstimator, typename  VoltageInterpolator, typename  CurrentInterpolator, typename  SocOcvCurve, typename  SocEstimator, typename  CapacityEstimator, typename OcvEstimator>
 class BatteryModel: public CycleHandler {
     public:
         BatteryModel(double capacity, Eigen::VectorXd& params, bool useMeasuredCapacity=false);
@@ -41,24 +41,31 @@ class BatteryModel: public CycleHandler {
         const bool useMeasuredCapacity;
         const double deltaTimeMult;
         const double capacityConfidenceThreshold;
+        const int socCountThreshold;
         double deltaTime;
+        double maxTimeDiffMult;
 
-        bool socEstimatorSetup;
+        bool socEstimatorSetupEcm;
+        bool socEstimatorSetupOcv;
+        int countSinceOcv;
 
-        double totalVoltageErrorSq;
-        int voltagePredictionCount;
-        double meanVoltage;
-        double totalVoltageVariance;
+        double totalVoltageErrorSq = 0;
+        int voltagePredictionCount = 0;
+        double meanVoltage = 0;
+        double totalVoltageVariance = 0;
+        int missedVoltagePredictionCount = 0;
         
-        double totalCapacityErrorSq;
-        int capacityPredictionCount;
-        double meanCapacity;
-        double totalCapacityVariance;
+        
+        double totalCapacityErrorSq = 0;
+        int capacityPredictionCount = 0;
+        double meanCapacity = 0;
+        double totalCapacityVariance = 0;
 
-        double totalResistanceErrorSq;
-        int resistancePredictionCount;
-        double meanResistance;
-        double totalResistanceVariance;
+        double totalResistanceErrorSq = 0;
+        int resistancePredictionCount = 0;
+        double meanResistance = 0;
+        double totalResistanceVariance = 0;
+        int missedResistancePredictionCount = 0;
 
         void processData(const Eigen::VectorXd &voltage,
                         const Eigen::VectorXd &current,
@@ -70,6 +77,7 @@ class BatteryModel: public CycleHandler {
         SocOcvCurve socOcvCurve;
         CapacityEstimator capacityEstimator;
         SocEstimator socEstimator;
+        OcvEstimator ocvEstimator;
 };
 
 #include "BatteryModel.tpp"

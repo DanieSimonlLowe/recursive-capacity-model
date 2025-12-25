@@ -85,6 +85,10 @@ Eigen::VectorXd CubicSpline::solveTridiagonal(
 
 double CubicSpline::predict(double time) {
     int n = t.size();
+
+    if (time <= t(0)) return y(0);
+    if (time >= t(n-1)) return y(n-1);
+
     const double* begin = t.data();
     const double* end = begin + n;
     const double* it = std::upper_bound(begin, end, time); // first element > time

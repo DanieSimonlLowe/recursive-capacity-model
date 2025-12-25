@@ -3,19 +3,21 @@
 #include "Algorithms/splines/AkimaSpline.h"
 #include "Algorithms/RecursiveLeastSquares.h"
 #include "EcmStateEstimation/Rls2EcmStateEstimator.h"
-#include "Interpolation/FastCubicSplineInterpolator.h"
+#include "Interpolation/CubicSplineInterpolator.h"
 #include "SocEstimation/EkfSocEstimator.h"
 #include "CapacityEstimation/RlsCapacityEstimator.h"
 #include "Optimization/BayesianOptimize.h"
+#include "OcvEstimation/Rls1EcmOcvEstimator.h"
 
 int main(int argc, char **argv) {
 
     BayesianOptimize<
     BatteryModel<Rls2EcmStateEstimator<RecursiveLeastSquares>,
-    FastCubicSplineInterpolator,FastCubicSplineInterpolator,
+    CubicSplineInterpolator,CubicSplineInterpolator,
     SplineOcvSoc<AkimaSpline>,EkfSocEstimator,
-    RlsCapacityEstimator<RecursiveLeastSquares>>
-    >(2.1,ErrorMetric::ResistanceError);
+    RlsCapacityEstimator<RecursiveLeastSquares>,
+    Rls1EcmOcvEstimator<RecursiveLeastSquares>
+    >>(2.1,ErrorMetric::ResistanceError);
     
 }
 

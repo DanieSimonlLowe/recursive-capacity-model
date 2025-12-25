@@ -12,11 +12,13 @@ template<typename RLS>
 void Rls2EcmStateEstimator<RLS>::update(const Eigen::VectorXd& current, 
                     const Eigen::VectorXd& voltage) {
     size_t n = current.size(); // all are same length
-    for (size_t i = 2; i < n; ++i) {
-        // Do something with (c, v, t)
-        Eigen::VectorXd input(5);
-        input << voltage[i-1], voltage[i-2], current[i], current[i-1], current[i-2];
-        rls->update(input,voltage[i]);
+    if (n > 2) {
+        for (size_t i = 2; i < n; ++i) {
+            // Do something with (c, v, t)
+            Eigen::VectorXd input(5);
+            input << voltage[i-1], voltage[i-2], -current[i], -current[i-1], -current[i-2];
+            rls->update(input,voltage[i]);
+        }
     }
     stateCalculated = false;
 }
@@ -29,18 +31,20 @@ void Rls2EcmStateEstimator<RLS>::update(const Eigen::VectorXd& current,
 template<typename RLS>
 void Rls2EcmStateEstimator<RLS>::calculateState() {
     Eigen::VectorXd weights =  rls->getState();
-    double a = (weights[3] - weights[2] - weights[4]) / (1 + weights[0] - weights[1]);
-    double b = deltaTime * deltaTime * (1 + weights[0] - weights[1]) / (4 * (1 - weights[0] - weights[1]));
-    double c = deltaTime * (1 + weights[1]) / (1 - weights[0] - weights[1]);
-    double d = (weights[2] + weights[3] + weights[4]) / (weights[0] + weights[1] - 1);
-    double f = deltaTime * (weights[4] - weights[3]) / (1 - weights[0] - weights[1]);
+    const double denom1 = 1 + weights[0] - weights[1];
+    const double denom2 = 1 - weights[0] - weights[1];
+    const double a = (weights[3] - weights[2] - weights[4]) / denom1;
+    const double b = deltaTime * deltaTime * denom1 / (4 * denom2);
+    const double c = deltaTime * (1 + weights[1]) / denom2;
+    const double d = -(weights[2] + weights[3] + weights[4]) / denom2;
+    const double f = deltaTime * (weights[4] - weights[2]) / denom2;
 
-    double root = std::sqrt(c*c - 4 * b);
-    double T1 = 0.5*(c + root);
-    double T2 = 0.5*(c - root);
+    const double root = std::sqrt(c*c - 4 * b);
+    const double T1 = 0.5*(c + root);
+    const double T2 = 0.5*(c - root);
 
     R0 = a;
-    R1 = (T1 * (d-1) + a*c - f) / root;
+    R1 = (T1 * (d-a) + a*c - f) / root;
     R2 = d - a - R1;
     C1 = T1/R1;
     C2 = T2/R2;
@@ -50,31 +54,38 @@ void Rls2EcmStateEstimator<RLS>::calculateState() {
 template<typename RLS>
 bool Rls2EcmStateEstimator<RLS>::canCalculateState() const {
     Eigen::VectorXd weights =  rls->getState();
-    if (weights[0] - weights[1] == -1) return false;
-    if (weights[0] + weights[1] == 1) return false;
-
-    double b_top = deltaTime * deltaTime * (1 + weights[0] - weights[1]);
-    double c_top = deltaTime * (1 + weights[1]);
-    double c_bottom = (1 - weights[0] - weights[1]); // Same as b_bottom
-
-    /*
-    for std::sqrt(c*c - 4 * b) to be defined and not zero c*c > 4*b
-    as 4*b_bottom = c_bottom (by defintion) 
-
-    (c_top/c_bottom)*(c_top/c_bottom) > 4*(b_top/(4*c_bottom))
-    (c_top/c_bottom)*(c_top/c_bottom) > b_top/c_bottom
-    (c_top*c_top)/(c_bottom*c_bottom) > b_top/c_bottom
-    (c_top*c_top) > b_top*c_bottom (as c_bottom then c_bottom*c_bottom is postive and has no effect on sign.)
-    */
-
-    if (c_top*c_top <= b_top * c_bottom) return false; // root of zero is zero and there is divide by root.
+    const double esp = 1e-10;
 
 
-    // needs to be postive and if mult of top and bottom is postive then div is also postive.
-    // check that R0 is not 0 or neggtive
-    if ((weights[3] - weights[2] - weights[4])*(1 + weights[0] - weights[1]) <= 0) return false;
+    const double denom1 = 1 + weights[0] - weights[1];
+    const double denom2 = 1 - weights[0] - weights[1];
+    if (std::abs(denom1) <= esp) return false;
+    if (std::abs(denom2) <= esp) return false;
+    
+    const double a = (weights[3] - weights[2] - weights[4]) / denom1;
+    const double b = deltaTime * deltaTime * denom1 / (4 * denom2);
+    const double c = deltaTime * (1 + weights[1]) / denom2;
+    const double d = -(weights[2] + weights[3] + weights[4]) / denom2;
+    const double f = deltaTime * (weights[4] - weights[2]) / denom2;
+    
+    
+    if (a < esp) return false; // a == R0
 
-    // I don't do any checks that would reqire a sqrt.
+    if (c*c - 4*b <= esp) return false;
+    const double root = std::sqrt(c*c - 4 * b);
+    if (root <= esp) return false; // roots can't be negitive so don't need to do abs.
+    const double T1 = 0.5*(c + root);
+    const double T2 = 0.5*(c - root);
+    
+    const double R1 = (T1 * (d-a) + a*c - f) / root;
+    if (R1 <= esp) return false;
+    const double R2 = d - a - R1;
+    if (R2 <= esp) return false;
+
+    const double C1 = T1/R1;
+    if (C1 <= esp) return false;
+    const double C2 = T2/R2;
+    if (C2 <= esp) return false;
 
     return true;
 }

@@ -16,7 +16,7 @@ make all
 
 Notes:
 
-TODO do this later cause I want to try it. (Is a 2ECM model.)
+TODO do this later cause I want to try it. (Is a 2ECM with OCV model)
 https://www.mdpi.com/1996-1073/14/4/1054
 
 

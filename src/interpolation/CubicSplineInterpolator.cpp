@@ -2,28 +2,14 @@
 #include "Interpolation/CubicSplineInterpolator.h"
 
 
-CubicSplineInterpolator::CubicSplineInterpolator(double ts, unsigned int windowSize) :
-     InterpolatorBase(),
-    windowSize(windowSize) {
-    times = std::vector<double>();
-    measurements = std::vector<double>();
-    spline = nullptr;
+CubicSplineInterpolator::CubicSplineInterpolator(Eigen::VectorXd params) :
+     InterpolatorBase() {
 };
 
 void CubicSplineInterpolator::update(double measurement, double time) {
     times.push_back(time);
     measurements.push_back(measurement);
-    if (times.size() > windowSize) {
-        times.erase(times.begin());
-        measurements.erase(measurements.begin());
-    }
-    spline.reset();
 }
-
-CubicSplineInterpolator* CubicSplineInterpolator::clone() {
-    return new CubicSplineInterpolator(timeStepSize, windowSize);
-}
-
 
 double CubicSplineInterpolator::predict(double time) {
     // Eigen::Map requires contiguous memory and non-zero size
@@ -42,13 +28,24 @@ double CubicSplineInterpolator::predict(double time) {
 }
 
 bool CubicSplineInterpolator::canPredict() {
-    return times.size() > windowSize - 1;
+    return times.size() > 5;
 }
 
-void CubicSplineInterpolator::reset() {
-    times.clear();
-    measurements.clear();
+void CubicSplineInterpolator::reset() {    
     spline.reset(); 
-
+    measurements.clear();
+    times.clear();
 }
 
+
+size_t CubicSplineInterpolator::getParamsCount() {
+    return 0;
+}
+
+Eigen::VectorXd CubicSplineInterpolator::getLowerBounds() {
+    return Eigen::VectorXd::Ones(0);
+}
+
+Eigen::VectorXd CubicSplineInterpolator::getUpperBounds() {
+    return Eigen::VectorXd::Ones(0);
+}
