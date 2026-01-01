@@ -6,6 +6,7 @@ class RecursiveLeastSquares {
         RecursiveLeastSquares(size_t dimension, double forgettingFactor=1, double initialCovariance=1);
         void update(Eigen::VectorXd x, double y);
         const Eigen::VectorXd getState();
+	void setState(Eigen::VectorXd state);
         const Eigen::MatrixXd getCovariance();
         void multCovariance(double mult);
 

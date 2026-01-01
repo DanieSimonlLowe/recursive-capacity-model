@@ -12,7 +12,8 @@
 template<typename BatteryModel>
 Eigen::VectorXd BayesianOptimize(
     double capacity,
-    ErrorMetric metric
+    ErrorMetric metric,
+    bool useMeasuredCapacity=false
 );
 
 #include "Optimization/BayesianOptimize.tpp"

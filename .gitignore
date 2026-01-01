@@ -2,3 +2,6 @@
 /.vscode
 /data/*
 /CMakeFiles/
+
+*.un~
+*~

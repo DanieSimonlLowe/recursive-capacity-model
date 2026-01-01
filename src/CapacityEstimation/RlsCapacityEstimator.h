@@ -6,13 +6,15 @@
 template<typename  RLS>
 class RlsCapacityEstimator : public CapacityEstimatorBase {
     public:
-        RlsCapacityEstimator(const Eigen::VectorXd& params);
+        RlsCapacityEstimator(const double capacity,const Eigen::VectorXd& params);
 
         void update(double current, double deltaTime, double diffSoc) override;
 
-        double getCapacity() override;
+        double const getCapacity() override;
 
-        double getCapacityVariance() override;
+        double const getCapacityVariance();
+
+        bool const canCalculateStateCapacity() override;
 
         static size_t getParamsCount();
         static const Eigen::VectorXd getLowerBounds();
@@ -20,6 +22,7 @@ class RlsCapacityEstimator : public CapacityEstimatorBase {
 
     private:
         RLS model;
+        double maxRelativeVariance;
 };
 
 #include "CapacityEstimation/RlsCapacityEstimator.tpp"

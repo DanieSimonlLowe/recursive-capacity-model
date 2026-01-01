@@ -9,9 +9,9 @@ class CapacityEstimatorBase {
 
         virtual void update(double current, double deltaTime, double diffSoc) = 0;
 
-        virtual double getCapacity() = 0;
+        virtual double const getCapacity() = 0;
 
-        virtual double getCapacityVariance() = 0;
+        virtual bool const canCalculateStateCapacity() = 0;
 
         //static size_t getParamsCount() { return 0; };
         //static const Eigen::VectorXd getLowerBounds() { return Eigen::VectorXd(); };

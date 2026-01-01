@@ -3,15 +3,16 @@
 template<typename BatteryModel>
 class MSEOptimizer : public bayesopt::ContinuousModel {
 private:
-    double capacity;
+    const double capacity;
     Eigen::VectorXd lower;
     Eigen::VectorXd upper;
     ErrorMetric metric;
+    const bool useMeasuredCapacity;
 
 public:
-    MSEOptimizer(double cap, ErrorMetric metric) 
+    MSEOptimizer(double cap, ErrorMetric metric, bool useMeasuredCapacity) 
         : ContinuousModel(BatteryModel::getParamsCount(), bayesopt::Parameters()), 
-          capacity(cap), metric(metric)
+          capacity(cap), metric(metric), useMeasuredCapacity(useMeasuredCapacity)
 
     {
         // Get bounds from the BatteryModel static methods (already Eigen::VectorXd)
@@ -35,7 +36,7 @@ public:
         // Configure BayesOpt parameters
         mParameters.force_jump = 3;
         mParameters.n_init_samples = 20;
-        mParameters.n_iterations = 130;
+        mParameters.n_iterations = 80;
         //mParameters.noise = 1e-6;
     }
     
@@ -50,7 +51,7 @@ public:
         double objective = 1e100;
         try {
             // Create battery model with current parameters
-            BatteryModel model(capacity, eigenParams, metric != ErrorMetric::CapacityError);
+            BatteryModel model(capacity, eigenParams, useMeasuredCapacity);
         
             // Process NASA cycles data
             ProcessNasaCycles("/mnt/c/Users/Danie/Desktop/project/data/B0006.mat", "B0006", model);
@@ -80,9 +81,9 @@ public:
 
 // Main function for Bayesian hyperparameter optimization
 template<typename BatteryModel>
-Eigen::VectorXd BayesianOptimize(double capacity, ErrorMetric metric)
+Eigen::VectorXd BayesianOptimize(double capacity, ErrorMetric metric, bool useMeasuredCapacity)
 {
-    MSEOptimizer<BatteryModel> optimizer(capacity, metric);
+    MSEOptimizer<BatteryModel> optimizer(capacity, metric, useMeasuredCapacity);
     
     const size_t dim = BatteryModel::getParamsCount();
     
@@ -104,7 +105,7 @@ Eigen::VectorXd BayesianOptimize(double capacity, ErrorMetric metric)
     std::cout << std::endl;
     
     // Create final model with optimized parameters and display results
-    BatteryModel finalModel(capacity, result);
+    BatteryModel finalModel(capacity, result, useMeasuredCapacity);
     std::cout << "Final model created with optimized parameters" << std::endl;
     ProcessNasaCycles("/mnt/c/Users/Danie/Desktop/project/data/B0007.mat", "B0007", finalModel);
     finalModel.display(metric);

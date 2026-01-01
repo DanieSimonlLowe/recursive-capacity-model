@@ -40,7 +40,6 @@ class BatteryModel: public CycleHandler {
     private:
         const bool useMeasuredCapacity;
         const double deltaTimeMult;
-        const double capacityConfidenceThreshold;
         const int socCountThreshold;
         double deltaTime;
         double maxTimeDiffMult;
@@ -55,11 +54,12 @@ class BatteryModel: public CycleHandler {
         double totalVoltageVariance = 0;
         int missedVoltagePredictionCount = 0;
         
-        
+        double initalCapacity = 0;
         double totalCapacityErrorSq = 0;
         int capacityPredictionCount = 0;
         double meanCapacity = 0;
         double totalCapacityVariance = 0;
+        int missedCapacityPredictionCount = 0;
 
         double totalResistanceErrorSq = 0;
         int resistancePredictionCount = 0;

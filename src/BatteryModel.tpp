@@ -12,14 +12,6 @@ BatteryModel<ECMStateEstimator,VoltageInterpolator,CurrentInterpolator,SocOcvCur
                                     CapacityEstimator::getParamsCount() +
                                     OcvEstimator::getParamsCount()
                                 ])),
-    capacityConfidenceThreshold(params[SocEstimator::getParamsCount() + 
-                                       ECMStateEstimator::getParamsCount() + 
-                                       VoltageInterpolator::getParamsCount() + 
-                                       CurrentInterpolator::getParamsCount() +
-                                       SocOcvCurve::getParamsCount() +
-                                       CapacityEstimator::getParamsCount() +
-                                       OcvEstimator::getParamsCount()
-                                       + 1]),
     socCountThreshold(int(std::pow(10,params[SocEstimator::getParamsCount() + 
                                        ECMStateEstimator::getParamsCount() + 
                                        VoltageInterpolator::getParamsCount() + 
@@ -27,7 +19,7 @@ BatteryModel<ECMStateEstimator,VoltageInterpolator,CurrentInterpolator,SocOcvCur
                                        SocOcvCurve::getParamsCount() +
                                        CapacityEstimator::getParamsCount() +
                                        OcvEstimator::getParamsCount()
-                                       + 2]))),
+                                       + 1]))),
     maxTimeDiffMult(std::pow(10,params[SocEstimator::getParamsCount() + 
                                        ECMStateEstimator::getParamsCount() + 
                                        VoltageInterpolator::getParamsCount() + 
@@ -35,7 +27,8 @@ BatteryModel<ECMStateEstimator,VoltageInterpolator,CurrentInterpolator,SocOcvCur
                                        SocOcvCurve::getParamsCount() +
                                        CapacityEstimator::getParamsCount() +
                                        OcvEstimator::getParamsCount()
-                                       + 3])),
+                                       + 2])),
+    initalCapacity(capacity),
     deltaTime(0),
     socEstimatorSetupEcm(false),
     socEstimatorSetupOcv(false),
@@ -45,6 +38,7 @@ BatteryModel<ECMStateEstimator,VoltageInterpolator,CurrentInterpolator,SocOcvCur
     totalCapacityErrorSq(0),
     capacityPredictionCount(0),
     resistancePredictionCount(0),
+    missedCapacityPredictionCount(0),
     ecmStateEstimator(params.segment(SocEstimator::getParamsCount(), ECMStateEstimator::getParamsCount())),
     voltageInterpolator(params.segment(SocEstimator::getParamsCount() + ECMStateEstimator::getParamsCount(), 
                                        VoltageInterpolator::getParamsCount())),
@@ -58,7 +52,7 @@ BatteryModel<ECMStateEstimator,VoltageInterpolator,CurrentInterpolator,SocOcvCur
                               VoltageInterpolator::getParamsCount() + 
                               CurrentInterpolator::getParamsCount(), 
                               SocOcvCurve::getParamsCount())),
-    capacityEstimator(params.segment(SocEstimator::getParamsCount() + 
+    capacityEstimator(capacity,params.segment(SocEstimator::getParamsCount() + 
                                      ECMStateEstimator::getParamsCount() + 
                                      VoltageInterpolator::getParamsCount() + 
                                      CurrentInterpolator::getParamsCount() +
@@ -86,10 +80,9 @@ size_t BatteryModel<ECMStateEstimator,VoltageInterpolator,CurrentInterpolator,So
         CurrentInterpolator::getParamsCount() +
         SocOcvCurve::getParamsCount() +
         CapacityEstimator::getParamsCount() + 
-        OcvEstimator::getParamsCount() + 4;
+        OcvEstimator::getParamsCount() + 3;
     // Extra parameters:
     // deltaTimeMult
-    // capacityConfidenceThreshold 
     // socCountThreshold
     // maxTimeDiffMult
 }
@@ -137,9 +130,8 @@ Eigen::VectorXd BatteryModel<ECMStateEstimator,VoltageInterpolator,CurrentInterp
     }
     
     v[offset] = -1;
-    v[offset + 1] = -0.01;
+    v[offset + 1] = 0; // 10^x
     v[offset + 2] = 0; // 10^x
-    v[offset + 3] = 0; // 10^x
     
     return v;
 }
@@ -187,9 +179,8 @@ Eigen::VectorXd BatteryModel<ECMStateEstimator,VoltageInterpolator,CurrentInterp
     }
 
     v[offset] = 1;
-    v[offset + 1] = 1;
-    v[offset + 2] = 3; // 10^x
-    v[offset + 3] = 2; // 10^x
+    v[offset + 1] = 3; // 10^x
+    v[offset + 2] = 2; // 10^x
 
     return v;
 }
@@ -280,22 +271,21 @@ void BatteryModel<ECMStateEstimator,VoltageInterpolator,CurrentInterpolator,SocO
                 const double predVoltage = socEstimator.predictVoltage(current,diffTime);
                 const double error = voltage - predVoltage;
                 voltagePredictionCount++;
-                const double deltaVoltage = voltage - meanVoltage;
+                const double voltageChange = voltages[i] - voltages[i-1]; // use this instead so I can check aginst just using last voltage.
+		const double deltaVoltage = voltageChange - meanVoltage;
                 meanVoltage += deltaVoltage / voltagePredictionCount;
-                totalVoltageVariance += deltaVoltage * (voltage - meanVoltage);
+                totalVoltageVariance += deltaVoltage * (voltageChange - meanVoltage);
                 totalVoltageErrorSq += error * error;
             } else {
                 socEstimator.predictVoltage(current,diffTime);
             }
             socEstimator.measure(current,voltage);
             socEstCount++;
-            if (!useMeasuredCapacity) {
-                const double endSoc = socEstimator.getSoc();
+            const double endSoc = socEstimator.getSoc();
 
-                capacityEstimator.update(current, diffTime, endSoc-startSoc);
-                if (capacityEstimator.getCapacityVariance() < capacityConfidenceThreshold * capacityEstimator.getCapacity()) {
-                    socEstimator.setCapacity(capacityEstimator.getCapacity());
-                }
+            capacityEstimator.update(current, diffTime, endSoc-startSoc);
+            if (!useMeasuredCapacity && capacityEstimator.canCalculateStateCapacity()) {
+                socEstimator.setCapacity(capacityEstimator.canCalculateStateCapacity());
             }
         } else {
             missedVoltagePredictionCount++;
@@ -321,14 +311,23 @@ void BatteryModel<ECMStateEstimator,VoltageInterpolator,CurrentInterpolator,SocO
                             const Eigen::VectorXd &time,
                             const double &capacity) {
     processData(voltage,current,time);
-    if (!useMeasuredCapacity) {
-        const double capError = capacityEstimator.getCapacity() - capacity;
-        const double deltaCapacity = capacityEstimator.getCapacity() - meanCapacity;
+    
+        // TODO add variance checking.
+    //if (capacityEstimator.canCalculateStateCapacity()) {
+    const double predCapacity = capacityEstimator.getCapacity();
+    if (missedCapacityPredictionCount > 5 && std::abs(predCapacity - initalCapacity) > 1e-1) {
+        const double capError = predCapacity - capacity;
+        const double deltaCapacity = predCapacity - meanCapacity;
         totalCapacityErrorSq += capError*capError;
         capacityPredictionCount++;
         meanCapacity += deltaCapacity / capacityPredictionCount;
-        totalCapacityVariance += deltaCapacity * (capacityEstimator.getCapacity() - meanCapacity);
+        totalCapacityVariance += deltaCapacity * (predCapacity - meanCapacity);
+        // std::cout << "Capacity " << capacity << ", " << predCapacity << "\n";
     } else {
+        missedCapacityPredictionCount++;
+    }
+    
+    if (useMeasuredCapacity) {
         socEstimator.setCapacity(capacity);
     }
 };
@@ -365,17 +364,20 @@ double BatteryModel<ECMStateEstimator,VoltageInterpolator,CurrentInterpolator,So
             }
         case ErrorMetric::VoltageError:
             if (voltagePredictionCount > 0) {
-                return 100 * (totalVoltageErrorSq / voltagePredictionCount
-                    * (1.0 + 0.5 * double(missedVoltagePredictionCount) / double(missedVoltagePredictionCount + voltagePredictionCount)));
+                return totalVoltageErrorSq / voltagePredictionCount
+                    * (1.0 + 0.5 * double(missedVoltagePredictionCount) / double(missedVoltagePredictionCount + voltagePredictionCount));
             } else {
                 return 1e100;
             }
         case ErrorMetric::CapacityError:
         default:
             if (capacityPredictionCount > 0) {
-                return totalCapacityErrorSq / capacityPredictionCount;
+                return totalCapacityErrorSq / capacityPredictionCount
+                    * (1.0 + 0.5 * double(missedCapacityPredictionCount) / double(missedCapacityPredictionCount + totalCapacityVariance));
+//		    + 1e-1 * getObjectiveValue(ErrorMetric::VoltageError); // This is added so that it can optimze the capacity better.
             } else {
-                return 1e100;
+                return 1e10 + 1e10 * getObjectiveValue(ErrorMetric::VoltageError); // 
+
             }
         
     }

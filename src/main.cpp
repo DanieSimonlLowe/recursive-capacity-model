@@ -17,7 +17,7 @@ int main(int argc, char **argv) {
     SplineOcvSoc<AkimaSpline>,EkfSocEstimator,
     RlsCapacityEstimator<RecursiveLeastSquares>,
     Rls1EcmOcvEstimator<RecursiveLeastSquares>
-    >>(2.1,ErrorMetric::ResistanceError);
+    >>(2.1,ErrorMetric::VoltageError,false);
     
 }
 

@@ -41,6 +41,10 @@ const Eigen::VectorXd RecursiveLeastSquares::getState() {
     return state;
 }
 
+void RecursiveLeastSquares::setState(Eigen::VectorXd value) {
+    state = value;
+}
+
 const Eigen::MatrixXd RecursiveLeastSquares::getCovariance() {
     return covariance;
 }
@@ -71,7 +75,7 @@ Eigen::VectorXd RecursiveLeastSquares::getLowerBounds() {
 
 Eigen::VectorXd RecursiveLeastSquares::getUpperBounds() {
     Eigen::VectorXd upper(2);
-    upper[0] = 1000;
+    upper[0] = 1200;
     upper[1] = 15;
     
     return upper;
