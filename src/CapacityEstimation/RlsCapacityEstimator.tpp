@@ -12,7 +12,7 @@ template<typename  RLS>
 void RlsCapacityEstimator<RLS>::update(double current, double deltaTime, double diffSoc) {
     Eigen::VectorXd x(2);
     x(0) = 1;
-    x(1) = -current * deltaTime * (1.0 / 3600.0);
+    x(1) = -current * deltaTime;
     model.update(x,diffSoc);
 }
 

@@ -1,4 +1,4 @@
-#include "BatteryModel.h"
+#include "BatteryModels/StateBasedBatteryModel.h"
 #include "SocOcv/SplineOcvSoc.h"
 #include "Algorithms/splines/AkimaSpline.h"
 #include "Algorithms/RecursiveLeastSquares.h"
@@ -12,12 +12,12 @@
 int main(int argc, char **argv) {
 
     BayesianOptimize<
-    BatteryModel<Rls2EcmStateEstimator<RecursiveLeastSquares>,
+    StateBasedBatteryModel<Rls2EcmStateEstimator<RecursiveLeastSquares>,
     CubicSplineInterpolator,CubicSplineInterpolator,
     SplineOcvSoc<AkimaSpline>,EkfSocEstimator,
     RlsCapacityEstimator<RecursiveLeastSquares>,
     Rls1EcmOcvEstimator<RecursiveLeastSquares>
-    >>(2.1,ErrorMetric::VoltageError,false);
+    >>(2.1,ErrorMetric::VoltageError,true);
     
 }
 

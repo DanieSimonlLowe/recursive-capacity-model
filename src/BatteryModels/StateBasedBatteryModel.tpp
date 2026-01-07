@@ -1,8 +1,8 @@
 
 
 template<typename  ECMStateEstimator, typename  VoltageInterpolator, typename  CurrentInterpolator, typename  SocOcvCurve, typename  SocEstimator, typename  CapacityEstimator, typename OcvEstimator>
-BatteryModel<ECMStateEstimator,VoltageInterpolator,CurrentInterpolator,SocOcvCurve,SocEstimator,CapacityEstimator,OcvEstimator>::
-    BatteryModel(double capacity, Eigen::VectorXd& params, bool useMeasuredCapacity): 
+StateBasedBatteryModel<ECMStateEstimator,VoltageInterpolator,CurrentInterpolator,SocOcvCurve,SocEstimator,CapacityEstimator,OcvEstimator>::
+    StateBasedBatteryModel(double capacity, Eigen::VectorXd& params, bool useMeasuredCapacity): 
     useMeasuredCapacity(useMeasuredCapacity),
     deltaTimeMult(std::pow(10, params[SocEstimator::getParamsCount() + 
                                     ECMStateEstimator::getParamsCount() + 
@@ -68,11 +68,11 @@ BatteryModel<ECMStateEstimator,VoltageInterpolator,CurrentInterpolator,SocOcvCur
     socEstimator(ECMStateEstimator::getDimension(),&socOcvCurve,params.segment(0, SocEstimator::getParamsCount()))
 {
     // Constructor body is now empty - all initialization done in initializer list
-    socEstimator.setCapacity(capacity);
+    socEstimator.setCapacity(capacity * 3600.0);
 }
 
 template<typename  ECMStateEstimator, typename  VoltageInterpolator, typename  CurrentInterpolator, typename  SocOcvCurve, typename  SocEstimator, typename  CapacityEstimator, typename OcvEstimator>
-size_t BatteryModel<ECMStateEstimator,VoltageInterpolator,CurrentInterpolator,SocOcvCurve,SocEstimator,CapacityEstimator,OcvEstimator>::
+size_t StateBasedBatteryModel<ECMStateEstimator,VoltageInterpolator,CurrentInterpolator,SocOcvCurve,SocEstimator,CapacityEstimator,OcvEstimator>::
     getParamsCount() {
     return SocEstimator::getParamsCount() + 
         ECMStateEstimator::getParamsCount() + 
@@ -88,7 +88,7 @@ size_t BatteryModel<ECMStateEstimator,VoltageInterpolator,CurrentInterpolator,So
 }
 
 template<typename ECMStateEstimator, typename VoltageInterpolator, typename CurrentInterpolator, typename SocOcvCurve, typename SocEstimator, typename CapacityEstimator, typename OcvEstimator>
-Eigen::VectorXd BatteryModel<ECMStateEstimator,VoltageInterpolator,CurrentInterpolator,SocOcvCurve,SocEstimator,CapacityEstimator,OcvEstimator>::
+Eigen::VectorXd StateBasedBatteryModel<ECMStateEstimator,VoltageInterpolator,CurrentInterpolator,SocOcvCurve,SocEstimator,CapacityEstimator,OcvEstimator>::
     getLowerBounds() {
     Eigen::VectorXd v(getParamsCount());
     
@@ -137,7 +137,7 @@ Eigen::VectorXd BatteryModel<ECMStateEstimator,VoltageInterpolator,CurrentInterp
 }
 
 template<typename ECMStateEstimator, typename VoltageInterpolator, typename CurrentInterpolator, typename SocOcvCurve, typename SocEstimator, typename CapacityEstimator, typename OcvEstimator>
-Eigen::VectorXd BatteryModel<ECMStateEstimator,VoltageInterpolator,CurrentInterpolator,SocOcvCurve,SocEstimator,CapacityEstimator,OcvEstimator>::
+Eigen::VectorXd StateBasedBatteryModel<ECMStateEstimator,VoltageInterpolator,CurrentInterpolator,SocOcvCurve,SocEstimator,CapacityEstimator,OcvEstimator>::
     getUpperBounds() {
     Eigen::VectorXd v(getParamsCount());
     
@@ -187,7 +187,7 @@ Eigen::VectorXd BatteryModel<ECMStateEstimator,VoltageInterpolator,CurrentInterp
 
 // getObjectiveValue
 template<typename  ECMStateEstimator, typename  VoltageInterpolator, typename  CurrentInterpolator, typename  SocOcvCurve, typename  SocEstimator, typename  CapacityEstimator, typename OcvEstimator>
-void BatteryModel<ECMStateEstimator,VoltageInterpolator,CurrentInterpolator,SocOcvCurve,SocEstimator,CapacityEstimator,OcvEstimator>::
+void StateBasedBatteryModel<ECMStateEstimator,VoltageInterpolator,CurrentInterpolator,SocOcvCurve,SocEstimator,CapacityEstimator,OcvEstimator>::
     processData(const Eigen::VectorXd &voltages,
                         const Eigen::VectorXd &currents,
                         const Eigen::VectorXd &times) {
@@ -285,7 +285,7 @@ void BatteryModel<ECMStateEstimator,VoltageInterpolator,CurrentInterpolator,SocO
 
             capacityEstimator.update(current, diffTime, endSoc-startSoc);
             if (!useMeasuredCapacity && capacityEstimator.canCalculateStateCapacity()) {
-                socEstimator.setCapacity(capacityEstimator.canCalculateStateCapacity());
+                socEstimator.setCapacity(capacityEstimator.getCapacity());
             }
         } else {
             missedVoltagePredictionCount++;
@@ -295,7 +295,7 @@ void BatteryModel<ECMStateEstimator,VoltageInterpolator,CurrentInterpolator,SocO
 }
 
 template<typename  ECMStateEstimator, typename  VoltageInterpolator, typename  CurrentInterpolator, typename  SocOcvCurve, typename  SocEstimator, typename  CapacityEstimator, typename OcvEstimator>
-void BatteryModel<ECMStateEstimator,VoltageInterpolator,CurrentInterpolator,SocOcvCurve,SocEstimator,CapacityEstimator,OcvEstimator>::
+void StateBasedBatteryModel<ECMStateEstimator,VoltageInterpolator,CurrentInterpolator,SocOcvCurve,SocEstimator,CapacityEstimator,OcvEstimator>::
     onCharge(const Eigen::VectorXd &voltage,
                             const Eigen::VectorXd &current,
                             const Eigen::VectorXd &temperature,
@@ -304,7 +304,7 @@ void BatteryModel<ECMStateEstimator,VoltageInterpolator,CurrentInterpolator,SocO
 };
 
 template<typename  ECMStateEstimator, typename  VoltageInterpolator, typename  CurrentInterpolator, typename  SocOcvCurve, typename  SocEstimator, typename  CapacityEstimator, typename OcvEstimator>
-void BatteryModel<ECMStateEstimator,VoltageInterpolator,CurrentInterpolator,SocOcvCurve,SocEstimator,CapacityEstimator,OcvEstimator>::
+void StateBasedBatteryModel<ECMStateEstimator,VoltageInterpolator,CurrentInterpolator,SocOcvCurve,SocEstimator,CapacityEstimator,OcvEstimator>::
     onDischarge(const Eigen::VectorXd &voltage,
                             const Eigen::VectorXd &current,
                             const Eigen::VectorXd &temperature,
@@ -312,9 +312,8 @@ void BatteryModel<ECMStateEstimator,VoltageInterpolator,CurrentInterpolator,SocO
                             const double &capacity) {
     processData(voltage,current,time);
     
-        // TODO add variance checking.
     //if (capacityEstimator.canCalculateStateCapacity()) {
-    const double predCapacity = capacityEstimator.getCapacity();
+    const double predCapacity = capacityEstimator.getCapacity() / 3600.0;
     if (missedCapacityPredictionCount > 5 && std::abs(predCapacity - initalCapacity) > 1e-1) {
         const double capError = predCapacity - capacity;
         const double deltaCapacity = predCapacity - meanCapacity;
@@ -328,12 +327,12 @@ void BatteryModel<ECMStateEstimator,VoltageInterpolator,CurrentInterpolator,SocO
     }
     
     if (useMeasuredCapacity) {
-        socEstimator.setCapacity(capacity);
+        socEstimator.setCapacity(capacity * 3600.0);
     }
 };
 
 template<typename  ECMStateEstimator, typename  VoltageInterpolator, typename  CurrentInterpolator, typename  SocOcvCurve, typename  SocEstimator, typename  CapacityEstimator, typename OcvEstimator>
-void BatteryModel<ECMStateEstimator,VoltageInterpolator,CurrentInterpolator,SocOcvCurve,SocEstimator,CapacityEstimator,OcvEstimator>::
+void StateBasedBatteryModel<ECMStateEstimator,VoltageInterpolator,CurrentInterpolator,SocOcvCurve,SocEstimator,CapacityEstimator,OcvEstimator>::
     onImpedance(double Rct, double Re) {
     if (ecmStateEstimator.canCalculateState()) {
         const double measured = ecmStateEstimator.getOhmicResistance();
@@ -352,7 +351,7 @@ void BatteryModel<ECMStateEstimator,VoltageInterpolator,CurrentInterpolator,SocO
 
 
 template<typename  ECMStateEstimator, typename  VoltageInterpolator, typename  CurrentInterpolator, typename  SocOcvCurve, typename  SocEstimator, typename  CapacityEstimator, typename OcvEstimator>
-double BatteryModel<ECMStateEstimator,VoltageInterpolator,CurrentInterpolator,SocOcvCurve,SocEstimator,CapacityEstimator,OcvEstimator>::
+double StateBasedBatteryModel<ECMStateEstimator,VoltageInterpolator,CurrentInterpolator,SocOcvCurve,SocEstimator,CapacityEstimator,OcvEstimator>::
     getObjectiveValue(ErrorMetric metric) const {
     switch (metric) {
         case ErrorMetric::ResistanceError:
@@ -384,7 +383,7 @@ double BatteryModel<ECMStateEstimator,VoltageInterpolator,CurrentInterpolator,So
 }
 
 template<typename  ECMStateEstimator, typename  VoltageInterpolator, typename  CurrentInterpolator, typename  SocOcvCurve, typename  SocEstimator, typename  CapacityEstimator, typename OcvEstimator>
-void BatteryModel<ECMStateEstimator,VoltageInterpolator,CurrentInterpolator,SocOcvCurve,SocEstimator,CapacityEstimator,OcvEstimator>::
+void StateBasedBatteryModel<ECMStateEstimator,VoltageInterpolator,CurrentInterpolator,SocOcvCurve,SocEstimator,CapacityEstimator,OcvEstimator>::
     display(ErrorMetric metric) const {
     switch (metric) {
         case ErrorMetric::ResistanceError:

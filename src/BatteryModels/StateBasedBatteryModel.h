@@ -2,17 +2,13 @@
 #include "Loading/ProcessNasaCycles.h"
 #include "Interpolation/InterpolatorBase.h"
 #include "Loading/ReadOcvSocCSV.h"
+#include "BatteryModels/BatteryModelBase.h"
 
-enum ErrorMetric {
-    VoltageError,
-    CapacityError,
-    ResistanceError
-};
 
 template<typename  ECMStateEstimator, typename  VoltageInterpolator, typename  CurrentInterpolator, typename  SocOcvCurve, typename  SocEstimator, typename  CapacityEstimator, typename OcvEstimator>
-class BatteryModel: public CycleHandler {
+class StateBasedBatteryModel: public BatteryModelBase {
     public:
-        BatteryModel(double capacity, Eigen::VectorXd& params, bool useMeasuredCapacity=false);
+        StateBasedBatteryModel(double capacity, Eigen::VectorXd& params, bool useMeasuredCapacity=false);
 
         static size_t getParamsCount();
         
@@ -23,19 +19,19 @@ class BatteryModel: public CycleHandler {
         void onCharge(const Eigen::VectorXd &voltage,
                             const Eigen::VectorXd &current,
                             const Eigen::VectorXd &temperature,
-                            const Eigen::VectorXd &time);
+                            const Eigen::VectorXd &time) override;
 
         void onDischarge(const Eigen::VectorXd &voltage,
                                 const Eigen::VectorXd &current,
                                 const Eigen::VectorXd &temperature,
                                 const Eigen::VectorXd &time,
-                                const double &capacity);
+                                const double &capacity) override;
 
-        void onImpedance(double Rct, double Re);
+        void onImpedance(double Rct, double Re) override;
 
-        double getObjectiveValue(ErrorMetric metric) const;
+        double getObjectiveValue(ErrorMetric metric) const override;
 
-        void display(ErrorMetric metric) const;
+        void display(ErrorMetric metric) const override;
     
     private:
         const bool useMeasuredCapacity;
@@ -80,4 +76,4 @@ class BatteryModel: public CycleHandler {
         OcvEstimator ocvEstimator;
 };
 
-#include "BatteryModel.tpp"
+#include "BatteryModels/StateBasedBatteryModel.tpp"

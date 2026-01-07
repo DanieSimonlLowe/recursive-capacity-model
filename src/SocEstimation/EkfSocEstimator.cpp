@@ -111,7 +111,7 @@ Eigen::MatrixXd EkfSocEstimator::HelperEKF::measurementJacobian(const Eigen::Vec
 
 Eigen::VectorXd EkfSocEstimator::HelperEKF::predictionFunction(const Eigen::VectorXd &state) {
     Eigen::VectorXd out(dimension + 1);
-    out(0) = state(0) - 1 / parent->capacity * (current * deltaTime / 3600.0);
+    out(0) = state(0) - 1 / parent->capacity * current * deltaTime ;
     for (int i = 0; i < dimension; i++) {
         const double e = std::exp(-(deltaTime) / (parent->branchResistances[i] * parent->branchCapacities[i]));
         out(i + 1) = state(i + 1) * e + parent->branchResistances[i] * (1 - e) * current; 

@@ -35,7 +35,7 @@ bool Rls1EcmOcvEstimator<RLS>::canCalculateState() {
 
     // if a*b > 0 then a/b > 0 and a=/=0 b=/=0
 
-    const double eps = 1e-12; 
+    const double eps = 1e-10; 
     if (std::abs(w2) <= eps) return false; // return false if Rs is undefined
     if (std::abs(w2*(w2-1)) <= eps) return false; // return false if R is undefined
     if (std::abs(w0*w2 + w1) <= eps) return false; // return false if C is undefined

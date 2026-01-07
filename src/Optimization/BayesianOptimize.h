@@ -7,7 +7,7 @@
 
 #include "Loading/ProcessNasaCycles.h"
 
-#include "BatteryModel.h"
+
 
 template<typename BatteryModel>
 Eigen::VectorXd BayesianOptimize(
