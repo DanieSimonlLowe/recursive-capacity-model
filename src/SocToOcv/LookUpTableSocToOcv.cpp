@@ -1,17 +1,17 @@
-#include "SocOcv/LookUpTableSocOcvCurve.h"
+#include "SocToOcv/LookUpTableSocToOcv.h"
 
-LookUpTableSocOcvCurve::LookUpTableSocOcvCurve(const OcvSocData &data, const Eigen::VectorXd& params) {
+LookUpTableSocToOcv::LookUpTableSocToOcv(const OcvSocData &data, const Eigen::VectorXd& params) {
     socs = data.soc;
     ocvs = data.ocv;
 }
 
-double LookUpTableSocOcvCurve::getOcv(double soc) {
+double LookUpTableSocToOcv::getOcv(double soc) {
     int closestIndex;
     (socs.array() - soc).abs().minCoeff(&closestIndex);
     return ocvs(closestIndex);
 }
 
-double LookUpTableSocOcvCurve::getOcvSocDerivative(double soc) {
+double LookUpTableSocToOcv::getOcvToSocDerivative(double soc) {
     int closestIndex;
     (socs.array() - soc).abs().minCoeff(&closestIndex);
     
@@ -38,3 +38,5 @@ double LookUpTableSocOcvCurve::getOcvSocDerivative(double soc) {
     const double derivative = (ocvl * (-h2) + ocvm * (h2 - h1) + ocvr * h1) / (h1 * h2 * (h1 + h2));
     return derivative;
 }
+
+

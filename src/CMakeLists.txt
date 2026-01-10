@@ -8,3 +8,4 @@ set(SOURCES ${SOURCES})
 
 add_library(${BINARY}_lib STATIC ${SOURCES})
 target_link_libraries(EVLifeCycle_lib matio)
+

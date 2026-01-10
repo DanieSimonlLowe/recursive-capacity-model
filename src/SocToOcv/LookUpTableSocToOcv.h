@@ -1,13 +1,13 @@
 #pragma once
 #include <cstddef>
-#include "SocOcv/SocOcvCurveBase.h"
+#include "SocToOcv/SocToOcvBase.h"
 
-class LookUpTableSocOcvCurve: public SocOcvCurveBase {
+class LookUpTableSocToOcv: public SocToOcvBase {
     public:
-        LookUpTableSocOcvCurve(const OcvSocData &data, const Eigen::VectorXd& params = Eigen::VectorXd());
+        LookUpTableSocToOcv(const OcvSocData &data, const Eigen::VectorXd& params = Eigen::VectorXd());
 
         double getOcv(double soc);
-        double getOcvSocDerivative(double soc);
+        double getOcvToSocDerivative(double soc);
 
         static size_t getParamsCount() { return 0; };
         static const Eigen::VectorXd getLowerBounds() { return Eigen::VectorXd(); };
@@ -17,3 +17,5 @@ class LookUpTableSocOcvCurve: public SocOcvCurveBase {
         Eigen::VectorXd ocvs;
         Eigen::VectorXd socs;
 };
+
+

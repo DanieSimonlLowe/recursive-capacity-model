@@ -1,13 +1,13 @@
 #pragma once
 #include "Algorithms/splines/PolynomialSpline.h"
-#include "SocOcv/SocOcvCurveBase.h"
+#include "SocToOcv/SocToOcvBase.h"
 
-class PolySplineOcvSoc: public SocOcvCurveBase {
+class PolySplineOcvToSoc: public SocToOcvBase {
     public:
-        PolySplineOcvSoc(const OcvSocData &data, const Eigen::VectorXd& params = Eigen::VectorXd());
+        PolySplineOcvToSoc(const OcvSocData &data, const Eigen::VectorXd& params = Eigen::VectorXd());
 
         double getOcv(double soc);
-        double getOcvSocDerivative(double soc);
+        double getOcvToSocDerivative(double soc);
 
         static size_t getParamsCount();
         static const Eigen::VectorXd getLowerBounds();
@@ -16,3 +16,5 @@ class PolySplineOcvSoc: public SocOcvCurveBase {
     private:
         PolynomialSpline *spline;
 };
+
+

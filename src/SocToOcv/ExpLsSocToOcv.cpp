@@ -1,6 +1,6 @@
-#include "SocOcv/ExpLsSocOcvCurve.h"
+#include "SocToOcv/ExpLsSocToOcv.h"
 
-ExpLsSocOcvCurve::ExpLsSocOcvCurve(const OcvSocData &data, const Eigen::VectorXd& params) {
+ExpLsSocToOcv::ExpLsSocToOcv(const OcvSocData &data, const Eigen::VectorXd& params) {
     power = static_cast<int>(params(0));
     negPower = static_cast<int>(params(2));
     Eigen::Index n = data.soc.size();
@@ -25,7 +25,7 @@ ExpLsSocOcvCurve::ExpLsSocOcvCurve(const OcvSocData &data, const Eigen::VectorXd
     ls = new LeastSquares(V, data.ocv, std::pow(10, params(1)));
 }
 
-double ExpLsSocOcvCurve::getOcv(double soc) {
+double ExpLsSocToOcv::getOcv(double soc) {
     Eigen::VectorXd input(power + 1 + negPower);
 
     input(0) = 1;
@@ -44,7 +44,7 @@ double ExpLsSocOcvCurve::getOcv(double soc) {
     return ls->predict(input);
 }
 
-double ExpLsSocOcvCurve::getOcvSocDerivative(double soc) {
+double ExpLsSocToOcv::getOcvToSocDerivative(double soc) {
     Eigen::VectorXd input(power + 1 + negPower);
     // TODO do this If I use it, it dose not make sense to reimplent this every time.
     // input(0) = 0;
@@ -62,11 +62,11 @@ double ExpLsSocOcvCurve::getOcvSocDerivative(double soc) {
     return ls->predict(input);
 }
 
-size_t ExpLsSocOcvCurve::getParamsCount() {
+size_t ExpLsSocToOcv::getParamsCount() {
     return 3;
 }
 
-const Eigen::VectorXd ExpLsSocOcvCurve::getLowerBounds() {
+const Eigen::VectorXd ExpLsSocToOcv::getLowerBounds() {
     // 0: power,
     // 1: regularization constant, (do log scale)
     Eigen::VectorXd lower(3);
@@ -77,7 +77,7 @@ const Eigen::VectorXd ExpLsSocOcvCurve::getLowerBounds() {
     return lower;
 }
 
-const Eigen::VectorXd ExpLsSocOcvCurve::getUpperBounds() {
+const Eigen::VectorXd ExpLsSocToOcv::getUpperBounds() {
     // 0: power,
     // 1: regularization constant, (do log scale)
     Eigen::VectorXd upper(3);
@@ -87,3 +87,5 @@ const Eigen::VectorXd ExpLsSocOcvCurve::getUpperBounds() {
     
     return upper;
 }
+
+

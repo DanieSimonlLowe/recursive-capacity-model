@@ -1,23 +1,20 @@
 #include "Algorithms/ExtendedKalmanFilter.h"
 
-ExtendedKalmanFilter::ExtendedKalmanFilter(
-    const Eigen::MatrixXd &processNoise, 
-    const Eigen::MatrixXd &measurementNoise,
-    const Eigen::VectorXd &initialState,
-    const Eigen::MatrixXd &initialCovariance)
-    : Q_(processNoise),
-      R_(measurementNoise),
-      x_(initialState),
-      P_(initialCovariance)
-{
+ExtendedKalmanFilter::ExtendedKalmanFilter(const Eigen::MatrixXd &processNoise,
+                                           const Eigen::MatrixXd &measurementNoise,
+                                           const Eigen::VectorXd &initialState,
+                                           const Eigen::MatrixXd &initialCovariance)
+    : Q_(processNoise), R_(measurementNoise), x_(initialState), P_(initialCovariance) {
     const int stateDim = initialState.size();
     // Check Q dimensions
     if (Q_.rows() != stateDim || Q_.cols() != stateDim) {
-        throw std::invalid_argument("Process noise covariance Q must be square and match state dimension.");
+        throw std::invalid_argument(
+            "Process noise covariance Q must be square and match state dimension.");
     }
     // Check P dimensions
     if (P_.rows() != stateDim || P_.cols() != stateDim) {
-        throw std::invalid_argument("Initial covariance P must be square and match state dimension.");
+        throw std::invalid_argument(
+            "Initial covariance P must be square and match state dimension.");
     }
     // Check R is square
     if (R_.rows() != R_.cols()) {
@@ -26,8 +23,8 @@ ExtendedKalmanFilter::ExtendedKalmanFilter(
 }
 
 void ExtendedKalmanFilter::predict() {
-    Eigen::MatrixXd jacobian = predictionJacobian(x_);  // Evaluate at current state
-    x_ = predictionFunction(x_);  // Then update state
+    Eigen::MatrixXd jacobian = predictionJacobian(x_); // Evaluate at current state
+    x_ = predictionFunction(x_);                       // Then update state
     P_ = jacobian * P_ * jacobian.transpose() + Q_;
     clampState();
 }
@@ -45,14 +42,9 @@ void ExtendedKalmanFilter::measure(const Eigen::VectorXd &measurement) {
     clampState();
 }
 
-const Eigen::VectorXd& ExtendedKalmanFilter::getState() {
-    return x_;
-}
+const Eigen::VectorXd &ExtendedKalmanFilter::getState() { return x_; }
 
-const Eigen::MatrixXd& ExtendedKalmanFilter::getCovariance() {
-    return P_;
-}
+const Eigen::MatrixXd &ExtendedKalmanFilter::getCovariance() { return P_; }
 
-void ExtendedKalmanFilter::setState(const Eigen::VectorXd &state) {
-    x_ = state;
-}
+void ExtendedKalmanFilter::setState(const Eigen::VectorXd &state) { x_ = state; }
+

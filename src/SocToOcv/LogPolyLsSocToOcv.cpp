@@ -1,6 +1,6 @@
-#include "SocOcv/LogPolyLsSocOcvCurve.h"
+#include "SocToOcv/LogPolyLsSocToOcv.h"
 
-LogPolyLsSocOcvCurve::LogPolyLsSocOcvCurve(const OcvSocData &data, const Eigen::VectorXd& params) {
+LogPolyLsSocToOcv::LogPolyLsSocToOcv(const OcvSocData &data, const Eigen::VectorXd& params) {
     power = static_cast<int>(params(0));
 
     Eigen::Index n = data.soc.size();
@@ -25,7 +25,7 @@ LogPolyLsSocOcvCurve::LogPolyLsSocOcvCurve(const OcvSocData &data, const Eigen::
     ls = new LeastSquares(V, data.ocv, std::pow(10, params(1)));
 }
 
-double LogPolyLsSocOcvCurve::getOcv(double soc) {
+double LogPolyLsSocToOcv::getOcv(double soc) {
     Eigen::VectorXd input(power+3);
 
     double value = 1.0;
@@ -45,7 +45,7 @@ double LogPolyLsSocOcvCurve::getOcv(double soc) {
     return ls->predict(input);
 }
 
-double LogPolyLsSocOcvCurve::getOcvSocDerivative(double soc) {
+double LogPolyLsSocToOcv::getOcvToSocDerivative(double soc) {
     Eigen::VectorXd input(power+3);
 
     input(0) = 0;
@@ -65,11 +65,11 @@ double LogPolyLsSocOcvCurve::getOcvSocDerivative(double soc) {
     return ls->predict(input);
 }
 
-size_t LogPolyLsSocOcvCurve::getParamsCount() {
+size_t LogPolyLsSocToOcv::getParamsCount() {
     return 2;
 }
 
-const Eigen::VectorXd LogPolyLsSocOcvCurve::getLowerBounds() {
+const Eigen::VectorXd LogPolyLsSocToOcv::getLowerBounds() {
     // 0: power,
     // 1: regularization constant, (do log scale)
     Eigen::VectorXd lower(2);
@@ -79,7 +79,7 @@ const Eigen::VectorXd LogPolyLsSocOcvCurve::getLowerBounds() {
     return lower;
 }
 
-const Eigen::VectorXd LogPolyLsSocOcvCurve::getUpperBounds() {
+const Eigen::VectorXd LogPolyLsSocToOcv::getUpperBounds() {
     // 0: power,
     // 1: regularization constant, (do log scale)
     Eigen::VectorXd upper(2);
@@ -88,3 +88,5 @@ const Eigen::VectorXd LogPolyLsSocOcvCurve::getUpperBounds() {
     
     return upper;
 }
+
+

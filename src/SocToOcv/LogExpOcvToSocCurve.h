@@ -2,22 +2,26 @@
 #include <Eigen/Dense>
 #include <cstddef>
 #include <cmath>
-#include "SocOcv/SocOcvCurveBase.h"
+
+#include "SocToOcv/SocToOcvBase.h"
 #include "Algorithms/LeastSquares.h"
 
-class ExpLsSocOcvCurve: public SocOcvCurveBase {
+
+// algorthim based on 
+// https://www.mdpi.com/1996-1073/9/11/900
+class LogExpOcvToSocCurve: public SocToOcvBase {
     public:
-        ExpLsSocOcvCurve(const OcvSocData &data, const Eigen::VectorXd& params = Eigen::VectorXd());
+        LogExpOcvToSocCurve(const OcvSocData &data, const Eigen::VectorXd& params);
 
         double getOcv(double soc) override;
-        double getOcvSocDerivative(double soc) override;
+        double getOcvToSocDerivative(double soc) override;
 
         static size_t getParamsCount();
         static const Eigen::VectorXd getLowerBounds();
         static const Eigen::VectorXd getUpperBounds();
     
     private:
-        LeastSquares *ls;
-        int power;
-        int negPower;
+        double a,b,c,d,m,n;
 };
+
+

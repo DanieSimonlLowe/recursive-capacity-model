@@ -1,6 +1,6 @@
-#include "SocOcv/NegPolyLsSocOcvCurve.h"
+#include "SocToOcv/NegPolyLsSocToOcv.h"
 
-NegPolyLsSocOcvCurve::NegPolyLsSocOcvCurve(const OcvSocData &data, const Eigen::VectorXd& params) {
+NegPolyLsSocToOcv::NegPolyLsSocToOcv(const OcvSocData &data, const Eigen::VectorXd& params) {
     power = static_cast<int>(params(0));
     negPower = static_cast<int>(params(2));
 
@@ -28,7 +28,7 @@ NegPolyLsSocOcvCurve::NegPolyLsSocOcvCurve(const OcvSocData &data, const Eigen::
     ls = new LeastSquares(V, data.ocv, std::pow(10, params(1)));
 }
 
-double NegPolyLsSocOcvCurve::getOcv(double soc) {
+double NegPolyLsSocToOcv::getOcv(double soc) {
     Eigen::VectorXd input(power + 2 + negPower);
 
     double value = 1.0;
@@ -49,7 +49,7 @@ double NegPolyLsSocOcvCurve::getOcv(double soc) {
     return ls->predict(input);
 }
 
-double NegPolyLsSocOcvCurve::getOcvSocDerivative(double soc) {
+double NegPolyLsSocToOcv::getOcvToSocDerivative(double soc) {
     Eigen::VectorXd input(power + 2 + negPower);
 
     input(0) = 0;
@@ -70,11 +70,11 @@ double NegPolyLsSocOcvCurve::getOcvSocDerivative(double soc) {
     return ls->predict(input);
 }
 
-size_t NegPolyLsSocOcvCurve::getParamsCount() {
+size_t NegPolyLsSocToOcv::getParamsCount() {
     return 3;
 }
 
-const Eigen::VectorXd NegPolyLsSocOcvCurve::getLowerBounds() {
+const Eigen::VectorXd NegPolyLsSocToOcv::getLowerBounds() {
     // 0: power,
     // 1: regularization constant, (do log scale)
     Eigen::VectorXd lower(3);
@@ -85,7 +85,7 @@ const Eigen::VectorXd NegPolyLsSocOcvCurve::getLowerBounds() {
     return lower;
 }
 
-const Eigen::VectorXd NegPolyLsSocOcvCurve::getUpperBounds() {
+const Eigen::VectorXd NegPolyLsSocToOcv::getUpperBounds() {
     // 0: power,
     // 1: regularization constant, (do log scale)
     Eigen::VectorXd upper(3);
@@ -95,3 +95,5 @@ const Eigen::VectorXd NegPolyLsSocOcvCurve::getUpperBounds() {
     
     return upper;
 }
+
+

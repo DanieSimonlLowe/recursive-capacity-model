@@ -1,6 +1,6 @@
-#include "SocOcv/LogExpOcvSocCurve.h"
+#include "SocToOcv/LogExpOcvToSocCurve.h"
 
-LogExpOcvSocCurve::LogExpOcvSocCurve(const OcvSocData &data, const Eigen::VectorXd& params) {
+LogExpOcvToSocCurve::LogExpOcvToSocCurve(const OcvSocData &data, const Eigen::VectorXd& params) {
     double learningRate = std::pow(10,params(0)); 
     const double learningRateDecay = 1 - 1/params(1); // value can't be grater then 1.
     const double minChange = 1e-12; // not a input as basicaly how long untill stops.
@@ -101,7 +101,7 @@ LogExpOcvSocCurve::LogExpOcvSocCurve(const OcvSocData &data, const Eigen::Vector
     // std::cout << "n: " << n << std::endl;
 }
 
-double LogExpOcvSocCurve::getOcv(double soc) {
+double LogExpOcvToSocCurve::getOcv(double soc) {
     if (soc < 1e-8) { 
         soc = 1e-8;
     } else if (soc > 1-1e8) {
@@ -110,7 +110,7 @@ double LogExpOcvSocCurve::getOcv(double soc) {
     return a + b * std::pow(-std::log(soc),m) + c * soc + d * std::exp(n*(soc-1));
 }
 
-double LogExpOcvSocCurve::getOcvSocDerivative(double soc) {
+double LogExpOcvToSocCurve::getOcvToSocDerivative(double soc) {
     if (soc < 1e-8) { 
         soc = 1e-8;
     } else if (soc > 1-1e8) {
@@ -120,11 +120,11 @@ double LogExpOcvSocCurve::getOcvSocDerivative(double soc) {
     return b * m * std::pow(-logsoc,m) / (soc * logsoc) + c + d * n * std::exp(n * (soc - 1));
 }
 
-size_t LogExpOcvSocCurve::getParamsCount() {
+size_t LogExpOcvToSocCurve::getParamsCount() {
     return 2;
 }
 
-const Eigen::VectorXd LogExpOcvSocCurve::getLowerBounds() {
+const Eigen::VectorXd LogExpOcvToSocCurve::getLowerBounds() {
     Eigen::VectorXd lower(2);
     lower[0] = -6; // 1e-3
     lower[1] = 10; // 0.75
@@ -132,10 +132,12 @@ const Eigen::VectorXd LogExpOcvSocCurve::getLowerBounds() {
     return lower;
 }
 
-const Eigen::VectorXd LogExpOcvSocCurve::getUpperBounds() {
+const Eigen::VectorXd LogExpOcvToSocCurve::getUpperBounds() {
     Eigen::VectorXd upper(2);
     upper[0] = 0; // 1
     upper[1] = 1000; // 0.99
     
     return upper;
 }
+
+

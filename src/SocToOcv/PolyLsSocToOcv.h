@@ -2,15 +2,15 @@
 #include <Eigen/Dense>
 #include <cstddef>
 #include <cmath>
-#include "SocOcv/SocOcvCurveBase.h"
+#include "SocToOcv/SocToOcvBase.h"
 #include "Algorithms/LeastSquares.h"
 
-class LogNegPolyLsSocOcvCurve: public SocOcvCurveBase {
+class PolyLsSocToOcv: public SocToOcvBase {
     public:
-        LogNegPolyLsSocOcvCurve(const OcvSocData &data, const Eigen::VectorXd& params = Eigen::VectorXd());
+        PolyLsSocToOcv(const OcvSocData &data, const Eigen::VectorXd& params = Eigen::VectorXd());
 
         double getOcv(double soc) override;
-        double getOcvSocDerivative(double soc) override;
+        double getOcvToSocDerivative(double soc) override;
 
         static size_t getParamsCount();
         static const Eigen::VectorXd getLowerBounds();
@@ -19,5 +19,6 @@ class LogNegPolyLsSocOcvCurve: public SocOcvCurveBase {
     private:
         LeastSquares *ls;
         int power;
-        int negPower;
 };
+
+

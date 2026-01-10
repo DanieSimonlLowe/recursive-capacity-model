@@ -1,0 +1,12 @@
+BasedOnStyle: LLVM
+IndentWidth: 4
+TabWidth: 4
+UseTab: Never
+
+AccessModifierOffset: -2
+IndentCaseLabels: true
+BreakBeforeBraces: Attach
+
+ContinuationIndentWidth: 4
+ColumnLimit: 100
+

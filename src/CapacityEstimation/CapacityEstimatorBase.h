@@ -1,7 +1,7 @@
 #pragma once
 
 #include <vector>
-#include "SocOcv/SocOcvCurveBase.h"
+#include "SocToOcv/SocToOcvBase.h"
 
 class CapacityEstimatorBase {
     public:
@@ -17,3 +17,4 @@ class CapacityEstimatorBase {
         //static const Eigen::VectorXd getLowerBounds() { return Eigen::VectorXd(); };
         //static const Eigen::VectorXd getUpperBounds() { return Eigen::VectorXd(); };
 };
+
