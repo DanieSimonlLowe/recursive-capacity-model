@@ -3,7 +3,7 @@
 #include <cstddef>
 #include <bayesopt/bayesopt.hpp>
 #include "SocToOcv/SocToOcvBase.h"
-#include "Loading/ReadOcvToSocCSV.h"
+#include "Loading/ReadOcvSocCSV.h"
 
 
 template<typename T>

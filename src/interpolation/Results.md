@@ -3,30 +3,31 @@ evaluate TwoPointLinearInterpolator
 Current         MSE 0.000112375  1-R^2 0.000130682        Var: 0.859912
 Voltage         MSE 0.00287721   1-R^2 0.0597229  Var: 0.048176
 Temperature     MSE 4.68396e-05  1-R^2 6.36706e-06        Var: 7.35655
+ 
 
-// Need to add 
-
-poly RSL
+# poly RSL
 Best params: 2.84325 985.926 14.9734 5.87084 
 evaluate P16InterpolatorBase
 Current         MSE 25.1534      1-R^2 29.6572    Var: 0.848138
 Voltage         MSE 76.4179      1-R^2 1595.27    Var: 0.0479027
 Temperature     MSE 296.321      1-R^2 40.1822    Var: 7.37444
 
-Poly Sin EFK
+# Poly Sin EFK
 Best params: 1.23695 0.000138322 0.0225726 14.9957 76.2866 evaluate P16InterpolatorBase
 Current         MSE 127.846      R^2 152.351    Var: 0.839154
 Voltage         MSE 220.378      R^2 4635.26    Var: 0.047544
 Temperature     MSE 142.03       R^2 19.3138    Var: 7.35381
+Reason: Failed to get it to sableize.
 
 
-evaluate HermiteSplineInterpolator
+# evaluate HermiteSplineInterpolator
 Current         MSE 0.0445552    1-R^2 0.0195562  Var: 2.27831
 Voltage         MSE 1.49318      1-R^2 18.5461    Var: 0.0805121
 Temperature     MSE 0.47722      1-R^2 0.150185   Var: 3.17754
 
+
 10 window size (bigger dose not affect it)
-evaluate CubicSplineInterpolator
+# evaluate CubicSplineInterpolator
 Current         MSE 8.61628e-05  1-R^2 0.000100889        Var: 0.85404
 Voltage         MSE 0.000535172  1-R^2 0.0111428  Var: 0.0480287
 Temperature     MSE 4.8806e-05   1-R^2 6.62716e-06        Var: 7.36453
@@ -62,13 +63,14 @@ Time taken: 4032.93 ms
 
 
 20 window size
-evaluate NotKnotSplineInterpolator
+# evaluate NotKnotSplineInterpolator
 Current         MSE 6.39878e-05  1-R^2 7.54473e-05        Var: 0.848113
 Voltage         MSE 0.000441548  1-R^2 0.0091     Var: 0.0485217
 Temperature     MSE 4.46601e-05  1-R^2 6.02622e-06        Var: 7.41095
 
-AkimaSplineInterpolator
+# AkimaSplineInterpolator
 Window Size 50
 Current         MSE 3.90979e-05  1-R^2 4.75699e-05      Var: 0.821905
 Voltage         MSE 0.000303107  1-R^2 0.00675616       Var: 0.0448637
 Temperature     MSE 4.17838e-05  1-R^2 5.77133e-06      Var: 7.23989
+Reason for no improvment: Not monotone so no magor improvment and diffrance is small so might not be real.

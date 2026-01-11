@@ -2,7 +2,7 @@
 
 template<typename T>
 SocToOcvOptimizer<T>::SocToOcvOptimizer() {
-    OcvSocData data = ReadOcvToSocCSV("/mnt/c/Users/Danie/Desktop/project/data/soc_volt_nasa.csv");
+    OcvSocData data = ReadOcvSocCSV("/mnt/c/Users/Danie/Desktop/project/data/soc_volt_nasa.csv");
     
     int n = data.soc.size();
     
