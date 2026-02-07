@@ -306,7 +306,7 @@ void StateBasedBatteryModel<ECMStateEstimator, VoltageInterpolator, CurrentInter
             socEstCount++;
             const double endSoc = socEstimator.getSoc();
 
-            capacityEstimator.update(current, diffTime, endSoc - startSoc);
+            capacityEstimator.update(current * diffTime, endSoc - startSoc);
             if (!useMeasuredCapacity && capacityEstimator.canCalculateStateCapacity()) {
                 socEstimator.setCapacity(capacityEstimator.getCapacity());
             }

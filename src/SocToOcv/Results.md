@@ -284,4 +284,10 @@ OCV variance             0.0959291
 OCV mean                 3.71098
 Mean squared error       2.71462e-07
 1 - R^2                  2.82982e-06
-Reason: Although there is improvment Is is very minor 
+Reason: Although there is improvment Is is very minor I think it might not be real.
+
+# Logistic Spline OcvToSoc
+OCV variance             0.080993
+OCV mean                 0.499095
+Mean squared error       5.51934e-06
+1 - R^2                  6.81459e-05

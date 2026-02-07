@@ -1,11 +1,17 @@
+#include "Algorithms/recursiveLeastSquares.h"
 #include "Algorithms/splines/FritschCarlsonSpline.h"
+#include "BatteryModels/DirectBatteryModel.h"
+#include "CapacityEstimation/RlsCapacityEstimator.h"
+#include "Interpolation/CubicSplineInterpolator.h"
+#include "OcvEstimation/Rls1EcmOcvEstimator.h"
 #include "OcvToSoc/SplineOcvToSoc.h"
-#include "OcvToSoc/OcvToSocOptimizer.h"
+#include "Optimization/BayesianOptimize.h"
 
 int main(int argc, char **argv) {
-    OcvToSocOptimizer<SplineOcvToSoc<FritschCarlsonSpline>> *optimizer =
-        new OcvToSocOptimizer<SplineOcvToSoc<FritschCarlsonSpline>>();
-    optimizer->display();
+    BayesianOptimize<DirectBatteryModel<
+        CubicSplineInterpolator, CubicSplineInterpolator, SplineOcvToSoc<FritschCarlsonSpline>,
+        RlsCapacityEstimator<RecursiveLeastSquares>, Rls1EcmOcvEstimator<RecursiveLeastSquares>>>(
+        2.1, ErrorMetric::CapacityError, true);
 }
 
 //(new InterpolatorEvaluator(new PolySineEKFInterpolator(0.1,2,0.1,0.1,10,10)))->printResults();
